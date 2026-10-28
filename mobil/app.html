@@ -126,7 +126,7 @@ const PAKET = [
 ];
 const STANDARD_RESA = 30; // antagen restid enkel väg när adressen saknas, minuter
 const KEY = "bildfab-mobil-demo";
-const ROLL = new URLSearchParams(location.search).get("roll") === "fotograf" ? "fotograf" : "maklare";
+const ROLL = (new URLSearchParams(location.search).get("roll") || window.name) === "fotograf" ? "fotograf" : "maklare";
 
 // ---------- hjälpare ----------
 const $ = s => document.querySelector(s);

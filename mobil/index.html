@@ -43,12 +43,12 @@ iframe { display: block; border: 0; width: 375px; height: 768px; transform-origi
   <figure>
     <figcaption>Mäklaren<small>bokar, får svar som notis, kan avboka</small></figcaption>
     <div class="phone"><div class="screen"><div class="status"><span id="klocka1"></span><span>▂▄▆ 5G ▮</span></div>
-      <iframe id="f1" src="app.html?roll=maklare" title="Mäklarens app"></iframe></div></div>
+      <iframe id="f1" name="maklare" title="Mäklarens app"></iframe></div></div>
   </figure>
   <figure>
     <figcaption>Fotografen<small>pling vid ny förfrågan, Ja/Nej, dagens jobb, egna tider</small></figcaption>
     <div class="phone"><div class="screen"><div class="status"><span id="klocka2"></span><span>▂▄▆ 5G ▮</span></div>
-      <iframe id="f2" src="app.html?roll=fotograf" title="Fotografens app"></iframe></div></div>
+      <iframe id="f2" name="fotograf" title="Fotografens app"></iframe></div></div>
   </figure>
 </div>
 
@@ -73,9 +73,14 @@ function skala() {
 addEventListener("resize", skala); skala();
 const tick = () => { const n = new Date(), t = `${String(n.getHours()).padStart(2, "0")}:${String(n.getMinutes()).padStart(2, "0")}`; klocka1.textContent = klocka2.textContent = t; };
 tick(); setInterval(tick, 10000);
+// srcdoc i stället för src: buildapp.se skickar frame-ancestors 'none', som stoppar vanliga iframes.
+// srcdoc har inget eget svar att blockera och delar ursprung (localStorage, storage-händelser) med sidan.
+let app = "";
+const ladda = () => { f1.srcdoc = f2.srcdoc = app; };
+fetch("app.html").then(r => r.text()).then(html => { app = html.replace("<head>", `<head><base href="${new URL("app.html", location.href)}">`); ladda(); });
 reset.onclick = () => {
   try { localStorage.removeItem("bildfab-mobil-demo"); localStorage.removeItem("bildfab-mobil-demo-profil"); } catch {}
-  f1.contentWindow.location.reload(); f2.contentWindow.location.reload();
+  ladda();
 };
 </script>
 </body>
