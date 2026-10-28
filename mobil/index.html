@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobilappen · Bildfab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --ink: #000; --text: #4b4b4b; --muted: #808291; --line: #e3e5e8; --soft: #f4f6f7;
+  --mono: "Roboto Mono", ui-monospace, monospace; --sans: "Roboto", system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--soft); color: var(--text); font: 15px/1.55 var(--sans); }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px clamp(16px, 3vw, 40px); background: #fff; border-bottom: 1px solid var(--line); }
+header h1 { font: 700 18px var(--mono); color: var(--ink); margin: 0; }
+header nav { display: flex; gap: 8px; }
+header a, header button { font: 13px var(--mono); color: var(--ink); text-decoration: none; border: 1px solid var(--ink); background: #fff; padding: 7px 12px; cursor: pointer; }
+.stage { display: flex; gap: clamp(16px, 4vw, 56px); justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
+figure { margin: 0; text-align: center; }
+figcaption { font: 700 14px var(--mono); color: var(--ink); margin-bottom: 10px; }
+figcaption small { display: block; font: 400 12px var(--sans); color: var(--muted); }
+.phone { position: relative; background: #0b0b0b; border-radius: 46px; padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,.25); }
+.phone::before { content: ""; position: absolute; top: 20px; left: 50%; translate: -50%; width: 96px; height: 26px; background: #0b0b0b; border-radius: 14px; z-index: 2; }
+.screen { position: relative; overflow: hidden; border-radius: 36px; background: #fff; }
+.status { height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font: 600 14px var(--sans); color: #000; }
+iframe { display: block; border: 0; width: 375px; height: 768px; transform-origin: top left; }
+.info { max-width: 1000px; margin: 0 auto; padding: 0 16px 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.info div { background: #fff; padding: 16px 18px; }
+.info b { font-family: var(--mono); color: var(--ink); display: block; margin-bottom: 4px; }
+.info p { margin: 0; font-size: 14px; }
+.steg { max-width: 1000px; margin: 0 auto 18px; padding: 0 16px; font-size: 14px; }
+@media (max-width: 860px) { .info { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mobilappen (bygga själv, som PWA)</h1>
+  <nav><button type="button" id="reset">Återställ demo</button><a href="../index.html">← Alla alternativ</a></nav>
+</header>
+
+<div class="stage">
+  <figure>
+    <figcaption>Mäklaren<small>bokar, får svar som notis, kan avboka</small></figcaption>
+    <div class="phone"><div class="screen"><div class="status"><span id="klocka1"></span><span>▂▄▆ 5G ▮</span></div>
+      <iframe id="f1" src="app.html?roll=maklare" title="Mäklarens app"></iframe></div></div>
+  </figure>
+  <figure>
+    <figcaption>Fotografen<small>pling vid ny förfrågan, Ja/Nej, dagens jobb, egna tider</small></figcaption>
+    <div class="phone"><div class="screen"><div class="status"><span id="klocka2"></span><span>▂▄▆ 5G ▮</span></div>
+      <iframe id="f2" src="app.html?roll=fotograf" title="Fotografens app"></iframe></div></div>
+  </figure>
+</div>
+
+<p class="steg"><b>Prova:</b> välj paket och skriv en adress i mäklarens telefon, till exempel "Holmsund, Umeå". Se restiden och den totala tiden, och att tiderna anpassas efter restiden. Välj dag och tid, fyll i dina uppgifter och skicka. Fotografens telefon plingar. Tryck på notisen och sedan Ja eller Nej, så plingar mäklarens telefon tillbaka.</p>
+
+<div class="info">
+  <div><b>Vad är en PWA?</b><p>En webbsida som kan läggas på hemskärmen och då beter sig som en app: egen ikon, helskärm, notiser. Ingen App Store, ingen avgift, samma kod som webben.</p></div>
+  <div><b>Notiser</b><p>Android: fungerar direkt i Chrome. iPhone: fungerar från iOS 16.4, men bara när appen är tillagd på hemskärmen. Därför uppmanar mäklarens app till det. SMS som reserv för den som inte lagt till appen.</p></div>
+  <div><b>Det här är en demo</b><p>Telefonerna delar data i den här webbläsaren och notiserna är simulerade. Skarpt skickas de som Web Push från en Cloudflare Worker. <code>app.html</code> kan också öppnas direkt i en mobil.</p></div>
+</div>
+
+<script>
+// Skala telefonerna så att båda får plats på skärmen.
+function skala() {
+  const s = Math.max(.6, Math.min(1, (innerHeight - 170) / 812, (innerWidth - 40) / 400));
+  for (const f of document.querySelectorAll("iframe")) {
+    f.style.transform = `scale(${s})`;
+    f.parentElement.style.width = 375 * s + "px";
+    f.parentElement.style.height = 44 + 768 * s + "px";
+  }
+}
+addEventListener("resize", skala); skala();
+const tick = () => { const n = new Date(), t = `${String(n.getHours()).padStart(2, "0")}:${String(n.getMinutes()).padStart(2, "0")}`; klocka1.textContent = klocka2.textContent = t; };
+tick(); setInterval(tick, 10000);
+reset.onclick = () => {
+  try { localStorage.removeItem("bildfab-mobil-demo"); localStorage.removeItem("bildfab-mobil-demo-profil"); } catch {}
+  f1.contentWindow.location.reload(); f2.contentWindow.location.reload();
+};
+</script>
+</body>
+</html>

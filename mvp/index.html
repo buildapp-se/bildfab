@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boka foto · Bildfabriken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #000; --text: #4b4b4b; --muted: #808291; --line: #e3e5e8;
+  --bg: #fff; --soft: #f4f6f7; --ok: #1f7a4d; --warn: #b4531a; --no: #cf2e2e;
+  --mono: "Roboto Mono", ui-monospace, monospace; --sans: "Roboto", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); }
+h1, h2, h3 { font-family: var(--mono); color: var(--ink); line-height: 1.2; margin: 0 0 .5em; }
+h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; }
+h2 { font-size: 22px; font-weight: 700; }
+h3 { font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+a { color: var(--ink); }
+button, input, select, textarea { font: inherit; color: var(--ink); }
+
+/* header */
+header { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #fff; z-index: 5; }
+header img { height: 52px; display: block; }
+nav { display: flex; gap: 4px; font-family: var(--mono); font-size: 14px; }
+nav a { text-decoration: none; padding: 8px 14px; border: 1px solid transparent; }
+nav a.on { border-color: var(--ink); }
+.demo { font: 500 11px var(--mono); letter-spacing: .1em; background: var(--ink); color: #fff; padding: 3px 8px; }
+
+/* hero */
+.hero { position: relative; height: 260px; background: #222 url(assets/prastgarden_16maj_export_white-2.jpg) center 40%/cover; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.1)); }
+.hero div { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 clamp(16px, 4vw, 48px) 32px; color: #fff; max-width: 1200px; margin: 0 auto; }
+.hero h1 { color: #fff; margin: 0; }
+.hero p { margin: 6px 0 0; font-family: var(--mono); font-size: 14px; opacity: .85; }
+
+main { max-width: 1200px; margin: 0 auto; padding: 32px clamp(16px, 4vw, 48px) 80px; }
+.layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
+
+/* stepper */
+.steps { display: flex; gap: 0; margin-bottom: 28px; font-family: var(--mono); font-size: 13px; counter-reset: s; }
+.steps li { list-style: none; flex: 1; padding: 10px 0; border-top: 3px solid var(--line); color: var(--muted); counter-increment: s; }
+.steps li::before { content: "0" counter(s) " "; }
+.steps li.on { border-color: var(--ink); color: var(--ink); }
+.steps li.done { border-color: var(--ink); }
+.steps { padding: 0; }
+
+fieldset { border: 0; padding: 0; margin: 0 0 28px; }
+legend { padding: 0; margin-bottom: 12px; }
+label.f { display: block; margin-bottom: 16px; font-size: 14px; color: var(--ink); }
+label.f span { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 13px; }
+input[type=text], input[type=email], input[type=tel], input[type=number], select, textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid #c9ccd1; border-radius: 0; background: #fff; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
+textarea { min-height: 90px; resize: vertical; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.hint { margin: -6px 0 16px; font-size: 14px; color: var(--ink); font-family: var(--mono); }
+.err { color: var(--no); font-size: 14px; min-height: 1.4em; margin: 0 0 12px; }
+
+/* choice cards */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.card { position: relative; border: 1px solid var(--line); cursor: pointer; background: #fff; display: block; }
+.card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; filter: grayscale(.2); }
+.card b { display: block; font-family: var(--mono); color: var(--ink); padding: 12px 14px 2px; font-size: 15px; }
+.card small { display: block; padding: 0 14px 14px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+.card input { position: absolute; opacity: 0; }
+.card:has(input:checked) { outline: 3px solid var(--ink); outline-offset: -3px; }
+.card:has(input:checked) img { filter: none; }
+.card:has(input:focus-visible) { outline: 3px solid #5b7bfb; }
+.card::after { content: ""; position: absolute; top: 10px; right: 10px; width: 26px; height: 26px; background: #fff; border: 1px solid var(--ink); }
+.card:has(input:checked)::after { content: "✓"; background: var(--ink); color: #fff; text-align: center; line-height: 24px; font-size: 14px; }
+
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { cursor: pointer; }
+.pill input { position: absolute; opacity: 0; }
+.pill span { display: inline-block; padding: 9px 14px; border: 1px solid #c9ccd1; font-size: 14px; color: var(--ink); }
+.pill input:checked + span { background: var(--ink); color: #fff; border-color: var(--ink); }
+.pill input:focus-visible + span { outline: 2px solid #5b7bfb; outline-offset: 2px; }
+
+/* calendar */
+.cal { border: 1px solid var(--line); padding: 16px; max-width: 520px; }
+.cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-family: var(--mono); color: var(--ink); }
+.cal-head button { border: 1px solid var(--line); background: #fff; width: 36px; height: 36px; cursor: pointer; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-grid .dow { font: 500 11px var(--mono); color: var(--muted); text-align: center; padding: 4px 0; }
+.day { aspect-ratio: 1; border: 1px solid var(--line); background: #fff; cursor: pointer; font-family: var(--mono); font-size: 14px;
+  position: relative; display: flex; align-items: center; justify-content: center; }
+.day i { position: absolute; bottom: 5px; left: 50%; translate: -50%; width: 6px; height: 6px; border-radius: 50%; }
+.day.free i { background: var(--ok); }
+.day.few i { background: var(--warn); }
+.day:disabled { background: var(--soft); color: #b8bbc2; cursor: not-allowed; border-color: transparent; }
+.day.sel { background: var(--ink); color: #fff; border-color: var(--ink); }
+.day.sel i { background: #fff; }
+.day b { position: absolute; top: 2px; right: 4px; font-size: 10px; }
+.legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.chosen { list-style: none; padding: 0; margin: 12px 0 0; font-family: var(--mono); font-size: 14px; color: var(--ink); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin: 12px 0; color: var(--ink); cursor: pointer; }
+.check input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ink); }
+
+/* buttons */
+.nav-btns { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 20px; }
+.btn { font-family: var(--mono); font-size: 14px; letter-spacing: .04em; padding: 14px 24px; border: 1px solid var(--ink); cursor: pointer;
+  background: var(--ink); color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.btn.ghost { background: #fff; color: var(--ink); }
+.btn.sm { padding: 8px 12px; font-size: 12px; }
+.btn:hover { opacity: .85; }
+.btn[hidden] { display: none; }
+
+/* summary */
+aside.sum { position: sticky; top: 100px; background: var(--soft); padding: 24px; font-size: 14px; }
+aside.sum dl { margin: 0; }
+aside.sum dt { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 14px; }
+aside.sum dd { margin: 2px 0 0; color: var(--ink); }
+.tot { display: grid; grid-template-columns: auto auto auto; gap: 4px 28px; align-items: end; justify-content: start; margin: 16px 0 4px; }
+.tot span { display: block; font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.tot b { display: block; font: 700 22px/1.2 var(--mono); color: var(--ink); white-space: nowrap; }
+.tot .sum { padding-left: 24px; border-left: 3px solid var(--ink); }
+.tot .sum b { font-size: 36px; }
+.tot small { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+aside .tot { grid-template-columns: 1fr 1fr; gap: 14px 16px; margin-top: 0; }
+aside .tot .sum { grid-column: 1 / -1; padding: 12px 0 0; border-left: 0; border-top: 3px solid var(--ink); }
+.est { margin-top: 20px; padding-top: 16px; border-top: 1px solid #d7dade; }
+.est strong { display: block; font: 700 28px var(--mono); color: var(--ink); }
+.note { font-size: 12px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
+
+/* confirmation */
+.done-box { max-width: 640px; }
+.ref { font: 700 14px var(--mono); background: var(--ink); color: #fff; display: inline-block; padding: 6px 10px; margin-bottom: 16px; }
+
+/* admin */
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.stats { display: flex; gap: 24px; font-family: var(--mono); font-size: 13px; }
+.stats b { display: block; font-size: 26px; color: var(--ink); }
+.req { border: 1px solid var(--line); margin-bottom: 16px; display: grid; grid-template-columns: 1fr 300px; }
+.req .body { padding: 20px; }
+.req .act { padding: 20px; background: var(--soft); display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.req .meta { font: 13px var(--mono); color: var(--muted); margin-bottom: 6px; }
+.req h2 { font-size: 18px; margin-bottom: 4px; }
+.req ul { margin: 8px 0 0; padding-left: 18px; font-size: 14px; }
+.tag { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; padding: 3px 8px; border: 1px solid currentColor; }
+.tag.ny { color: var(--warn); } .tag.bekraftad { color: var(--ok); } .tag.avbojd { color: var(--no); }
+.act select { padding: 9px 10px; }
+.act .links { display: flex; gap: 8px; flex-wrap: wrap; }
+.empty { padding: 40px; text-align: center; background: var(--soft); font-family: var(--mono); }
+
+footer { background: var(--ink); color: #fff; padding: 32px clamp(16px, 4vw, 48px); font-family: var(--mono); font-size: 13px; }
+footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+@media (max-width: 900px) {
+  .layout, .req { grid-template-columns: 1fr; }
+  aside.sum { position: static; }
+  .cards { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .cards, .row { grid-template-columns: 1fr; }
+  .steps li { font-size: 0; } .steps li::before { font-size: 13px; }
+  header img { height: 40px; }
+  nav a { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#boka"><img src="assets/Bildfabriken-logo.png" alt="Bildfabriken"></a>
+  <nav>
+    <a href="#boka" id="nav-boka">Boka foto</a>
+    <a href="#fotograf" id="nav-fotograf">Fotografvy</a>
+    <a href="../index.html">← Alla alternativ</a>
+  </nav>
+  <span class="demo">DEMO</span>
+</header>
+
+<!-- KUNDVY -->
+<section id="view-boka">
+  <div class="hero"><div>
+    <h1>Boka fotografering</h1>
+    <p>Mäklarfoto · Arkitektur · Interiör · Drönare · Umeå och Norrland</p>
+  </div></div>
+  <main>
+    <div class="layout">
+      <form id="form" novalidate>
+        <ol class="steps" id="steps">
+          <li>Uppdrag</li><li>Objekt</li><li>Datum</li><li>Kontakt</li>
+        </ol>
+
+        <div class="step" data-step="0">
+          <fieldset>
+            <legend><h3>Vem bokar?</h3></legend>
+            <div class="pills">
+              <label class="pill"><input type="radio" name="kundtyp" value="Mäklare" checked><span>Mäklare</span></label>
+              <label class="pill"><input type="radio" name="kundtyp" value="Arkitektbyrå"><span>Arkitektbyrå</span></label>
+              <label class="pill"><input type="radio" name="kundtyp" value="Byggherre / fastighetsägare"><span>Byggherre / fastighetsägare</span></label>
+              <label class="pill"><input type="radio" name="kundtyp" value="Annat"><span>Annat</span></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><h3>Vad ska fotograferas?</h3></legend>
+            <div class="cards">
+              <label class="card"><input type="checkbox" name="tjanst" value="Bostadsfoto (mäklarpaket)">
+                <img src="assets/doblensplan4_annap-4.jpg" alt=""><b>Bostad till salu</b><small>Mäklarpaket: interiör och exteriör, snabb leverans.</small></label>
+              <label class="card"><input type="checkbox" name="tjanst" value="Arkitekturfoto exteriör">
+                <img src="assets/web-1.jpg" alt=""><b>Arkitektur, exteriör</b><small>Fasader, volymer och sammanhang i rätt ljus.</small></label>
+              <label class="card"><input type="checkbox" name="tjanst" value="Interiörfoto">
+                <img src="assets/varg_web-16.jpg" alt=""><b>Interiör</b><small>Rum, material och detaljer. Ljus och komposition.</small></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><h3>Tillägg</h3></legend>
+            <div class="pills">
+              <label class="pill"><input type="checkbox" name="tillagg" value="Drönarfoto"><span>Drönarfoto</span></label>
+              <label class="pill"><input type="checkbox" name="tillagg" value="Drönarfilm"><span>Drönarfilm</span></label>
+              <label class="pill"><input type="checkbox" name="tillagg" value="Skymningsfoto"><span>Skymningsfoto</span></label>
+              <label class="pill"><input type="checkbox" name="tillagg" value="Expressleverans 24 h"><span>Expressleverans 24 h</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="1" hidden>
+          <fieldset>
+            <legend><h3>Om objektet</h3></legend>
+            <div class="row">
+              <label class="f"><span>Adress *</span><input type="text" name="adress" autocomplete="street-address" required></label>
+              <label class="f"><span>Ort *</span><input type="text" name="ort" value="Umeå" required></label>
+            </div>
+            <p class="hint" id="restid" aria-live="polite"></p>
+            <div class="row">
+              <label class="f"><span>Typ av objekt</span>
+                <select name="objekttyp">
+                  <option>Kontor / verksamhet</option><option>Offentlig byggnad</option><option>Flerbostadshus</option>
+                  <option>Villa / radhus</option><option>Lägenhet</option><option>Annat</option>
+                </select></label>
+              <label class="f"><span>Ungefärlig yta (kvm)</span><input type="number" name="yta" min="0" step="10" placeholder="t.ex. 120"></label>
+            </div>
+            <div class="row">
+              <label class="f"><span>Antal bilder</span>
+                <select name="bilder"><option>10–15</option><option selected>15–25</option><option>25–40</option><option>40+</option></select></label>
+              <label class="f"><span>Projektnamn / referens</span><input type="text" name="projekt"></label>
+            </div>
+            <label class="f"><span>Tillträde (kontaktperson på plats, kod, nyckel)</span><input type="text" name="tilltrade"></label>
+            <label class="f"><span>Önskemål och övrigt</span><textarea name="ovrigt" placeholder="Vyer som är viktiga, saker att undvika, publiceringsdatum ..."></textarea></label>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="2" hidden>
+          <fieldset>
+            <legend><h3>Önskade datum (välj upp till 3)</h3></legend>
+            <div class="cal">
+              <div class="cal-head">
+                <button type="button" id="prev" aria-label="Föregående månad">‹</button>
+                <span id="month"></span>
+                <button type="button" id="next" aria-label="Nästa månad">›</button>
+              </div>
+              <div class="cal-grid" id="grid"></div>
+              <div class="legend">
+                <span><i style="background:var(--ok)"></i>Ledigt</span>
+                <span><i style="background:var(--warn)"></i>Få tider kvar</span>
+                <span><i style="background:#d6d8dc"></i>Fullbokat / helg</span>
+              </div>
+            </div>
+            <ol class="chosen" id="chosen"></ol>
+          </fieldset>
+          <fieldset>
+            <legend><h3>Tid på dagen</h3></legend>
+            <div class="pills">
+              <label class="pill"><input type="radio" name="fonster" value="Förmiddag"><span>Förmiddag</span></label>
+              <label class="pill"><input type="radio" name="fonster" value="Eftermiddag"><span>Eftermiddag</span></label>
+              <label class="pill"><input type="radio" name="fonster" value="Kvällsljus"><span>Kvällsljus</span></label>
+              <label class="pill"><input type="radio" name="fonster" value="Flexibelt" checked><span>Flexibelt</span></label>
+            </div>
+            <label class="check"><input type="checkbox" name="vader" checked>
+              <span>Väderberoende: fotografen får flytta till närmaste bra dag om det är mulet (gäller exteriör).</span></label>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="3" hidden>
+          <fieldset>
+            <legend><h3>Kontaktuppgifter</h3></legend>
+            <div class="row">
+              <label class="f"><span>Företag *</span><input type="text" name="foretag" autocomplete="organization" required></label>
+              <label class="f"><span>Namn *</span><input type="text" name="namn" autocomplete="name" required></label>
+            </div>
+            <div class="row">
+              <label class="f"><span>E-post *</span><input type="email" name="epost" autocomplete="email" required></label>
+              <label class="f"><span>Telefon</span><input type="tel" name="telefon" autocomplete="tel"></label>
+            </div>
+            <label class="f"><span>Fakturareferens</span><input type="text" name="faktura"></label>
+            <label class="check"><input type="checkbox" name="gdpr" required>
+              <span>Jag godkänner att Bildfabriken sparar uppgifterna för att hantera bokningen. *</span></label>
+          </fieldset>
+        </div>
+
+        <p class="err" id="err" role="alert"></p>
+        <div class="nav-btns">
+          <button type="button" class="btn ghost" id="back">← Tillbaka</button>
+          <button type="button" class="btn" id="fwd">Nästa →</button>
+          <button type="submit" class="btn" id="send" hidden>Skicka förfrågan</button>
+        </div>
+      </form>
+
+      <aside class="sum" aria-live="polite">
+        <h3>Din förfrågan</h3>
+        <dl id="sum"></dl>
+        <div class="est">
+          <div id="est"></div>
+        </div>
+        <p class="note">Det här är en förfrågan, ingen bindande bokning. Vi bekräftar datum och fotograf inom en arbetsdag och skickar offert vid behov.</p>
+      </aside>
+    </div>
+  </main>
+</section>
+
+<section id="view-klar" hidden>
+  <main>
+    <div class="done-box">
+      <span class="ref" id="klar-ref"></span>
+      <h1>Tack, förfrågan är skickad</h1>
+      <p>Vi går igenom uppdraget och återkommer med bekräftat datum och fotograf inom en arbetsdag. En kopia skickas till <b id="klar-epost"></b>.</p>
+      <p style="margin-top:28px; display:flex; gap:12px; flex-wrap:wrap">
+        <a class="btn" href="#fotograf">Se den i fotografvyn →</a>
+        <a class="btn ghost" href="#boka" id="ny">Ny bokning</a>
+      </p>
+    </div>
+  </main>
+</section>
+
+<!-- FOTOGRAFVY -->
+<section id="view-fotograf" hidden>
+  <main>
+    <div class="toolbar">
+      <div>
+        <h1 style="margin:0">Inkomna förfrågningar</h1>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div id="list"></div>
+    <p style="margin-top:28px"><button class="btn ghost sm" id="reset">Återställ demodata</button></p>
+  </main>
+</section>
+
+<footer><div>
+  <span>Bildfabriken · Brogatan 5, Umeå · info@bildfab.se</span>
+  <span>Demo av bokningsflöde. Data sparas bara i den här webbläsaren.</span>
+</div></footer>
+
+<script src="../restid.js"></script>
+<script>
+const FOTOGRAFER = ["Fotograf A", "Fotograf B"];
+const STORE = "bildfab-demo-bokningar";
+const $ = s => document.querySelector(s);
+const form = $("#form");
+
+// ---------- hjälpare ----------
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const fromIso = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const fmtDag = s => fromIso(s).toLocaleDateString("sv-SE", { weekday: "short", day: "numeric", month: "short" });
+const fmtTim = h => (Number.isInteger(h) ? h : h.toFixed(1).replace(".", ",")) + " h";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+// Uppskattad tid på plats, i timmar. Det här är affärslogiken att justera med Bildfab.
+function uppskattadTid(o) {
+  const bas = { "Arkitekturfoto exteriör": 2, "Interiörfoto": 2, "Bostadsfoto (mäklarpaket)": 1.5 };
+  let h = o.tjanst.reduce((sum, t) => sum + (bas[t] ?? 0), 0);
+  if (!h) return 0;
+  if (o.yta > 150) h += Math.ceil((o.yta - 150) / 100) * 0.5; // +30 min per påbörjade 100 kvm över 150
+  if (o.bilder === "25–40") h += 0.5;
+  if (o.bilder === "40+") h += 1;
+  if (o.tillagg.some(t => t.startsWith("Drönar"))) h += 0.5;
+  if (o.tillagg.includes("Skymningsfoto")) h += 1;
+  return h;
+}
+
+// Låtsas-tillgänglighet: helger stängda, vissa dagar fulla. Ersätts av fotografernas Google-kalendrar på riktigt.
+function tillganglighet(d) {
+  const idag = new Date(); idag.setHours(0, 0, 0, 0);
+  if (d <= idag || d.getDay() === 0 || d.getDay() === 6) return "stangd";
+  const n = (d.getDate() * 7 + d.getMonth() * 13) % 10;
+  return n < 2 ? "full" : n < 4 ? "few" : "free";
+}
+
+// ---------- lagring ----------
+function laddaBokningar() {
+  try { const r = JSON.parse(localStorage.getItem(STORE)); if (Array.isArray(r)) return r; } catch {}
+  return demoData();
+}
+function sparaBokningar(b) { try { localStorage.setItem(STORE, JSON.stringify(b)); } catch {} }
+function demoData() {
+  const dag = n => { const d = new Date(); d.setDate(d.getDate() + n); while (d.getDay() % 6 === 0) d.setDate(d.getDate() + 1); return iso(d); };
+  return [
+    { ref: "BF-1041", skapad: new Date().toISOString(), status: "ny", kundtyp: "Arkitektbyrå",
+      tjanst: ["Arkitekturfoto exteriör", "Interiörfoto"], tillagg: ["Drönarfoto"], adress: "Storgatan 12", ort: "Umeå",
+      objekttyp: "Offentlig byggnad", yta: 1200, bilder: "25–40", projekt: "Kulturhuset etapp 2", tilltrade: "Fastighetsvärd på plats",
+      ovrigt: "Viktigt med entrén i kvällsljus.", datum: [dag(5), dag(6), dag(9)], fonster: "Kvällsljus", vader: true,
+      foretag: "Exempelbyrå Arkitekter AB", namn: "Anna Exempel", epost: "anna@example.se", telefon: "070-000 00 00", faktura: "P-2231" },
+    { ref: "BF-1040", skapad: new Date(Date.now() - 864e5).toISOString(), status: "bekraftad", kundtyp: "Mäklare",
+      tjanst: ["Bostadsfoto (mäklarpaket)"], tillagg: ["Expressleverans 24 h"], adress: "Västra Esplanaden 3", ort: "Umeå",
+      objekttyp: "Lägenhet", yta: 74, bilder: "15–25", projekt: "", tilltrade: "Nyckel hos mäklaren", ovrigt: "",
+      datum: [dag(2)], fonster: "Förmiddag", vader: false, valtDatum: dag(2), fotograf: FOTOGRAFER[0],
+      foretag: "Demomäklarna AB", namn: "Erik Demo", epost: "erik@example.se", telefon: "", faktura: "" },
+  ];
+}
+
+// Jobbtid + restid tur och retur, i stora siffror. Visas för både mäklaren och fotografen.
+const fmtMin = m => { const h = Math.floor(m / 60), r = Math.round(m % 60); return h ? `${h} h${r ? " " + r + " min" : ""}` : `${r} min`; };
+function tidsblock(o) {
+  const jobb = Math.round(uppskattadTid(o) * 60);
+  const resa = o.restid ? o.restid.min * 2 : 0;
+  if (!jobb) return `<div class="tot"><small>Välj vad som ska fotograferas för att se total tid.</small></div>`;
+  return `<div class="tot">
+    <div><span>Fotografering</span><b>${fmtMin(jobb)}</b></div>
+    <div><span>Restid t/r</span><b>${o.restid ? fmtMin(resa) : "–"}</b></div>
+    <div class="sum"><span>Total tid</span><b>${fmtMin(jobb + resa)}</b></div>
+    <small>${o.restid ? `${o.restid.min} min enkel väg från kontoret, ${o.restid.km.toFixed(1).replace(".", ",")} km` : o.ref ? "Restid saknas för den här förfrågan." : "Restid räknas när adressen är ifylld."}</small>
+  </div>`;
+}
+
+// ---------- restid ----------
+let aktuellRestid = null, restidTimer, restidFraga = "";
+function uppdateraRestid() {
+  clearTimeout(restidTimer);
+  const adress = [form.adress.value.trim(), form.ort.value.trim()].filter(Boolean).join(", ");
+  if (form.adress.value.trim().length < 4) { $("#restid").textContent = ""; aktuellRestid = null; ritaSammanfattning(); return; }
+  restidTimer = setTimeout(async () => {
+    restidFraga = adress;
+    $("#restid").textContent = "🚗 Räknar restid från kontoret ...";
+    try {
+      const r = await restid(adress);
+      if (restidFraga !== adress) return;
+      aktuellRestid = r;
+      $("#restid").textContent = `🚗 Från kontoret (${KONTOR.namn}): ${restidText(r)}`;
+    } catch (e) {
+      if (restidFraga !== adress) return;
+      aktuellRestid = null;
+      $("#restid").textContent = `🚗 Restid: ${e.message}. Kontrollera adressen.`;
+    }
+    ritaSammanfattning();
+  }, 900);
+}
+form.adress.addEventListener("input", uppdateraRestid);
+form.ort.addEventListener("input", uppdateraRestid);
+
+// ---------- kundflöde ----------
+let steg = 0;
+let valdaDatum = [];
+let visadManad = new Date(); visadManad.setDate(1);
+
+function lasForm() {
+  const fd = new FormData(form);
+  return {
+    kundtyp: fd.get("kundtyp"), tjanst: fd.getAll("tjanst"), tillagg: fd.getAll("tillagg"),
+    adress: fd.get("adress")?.trim(), ort: fd.get("ort")?.trim(), objekttyp: fd.get("objekttyp"),
+    yta: Number(fd.get("yta")) || 0, bilder: fd.get("bilder"), projekt: fd.get("projekt")?.trim(),
+    tilltrade: fd.get("tilltrade")?.trim(), ovrigt: fd.get("ovrigt")?.trim(),
+    datum: [...valdaDatum], fonster: fd.get("fonster"), vader: fd.has("vader"),
+    foretag: fd.get("foretag")?.trim(), namn: fd.get("namn")?.trim(), epost: fd.get("epost")?.trim(),
+    telefon: fd.get("telefon")?.trim(), faktura: fd.get("faktura")?.trim(), gdpr: fd.has("gdpr"),
+    restid: aktuellRestid,
+  };
+}
+
+function validera(n, o) {
+  if (n === 0 && !o.tjanst.length) return "Välj minst en typ av fotografering.";
+  if (n === 1 && (!o.adress || !o.ort)) return "Fyll i adress och ort.";
+  if (n === 2 && !o.datum.length) return "Välj minst ett önskat datum i kalendern.";
+  if (n === 3) {
+    if (!o.foretag || !o.namn) return "Fyll i företag och namn.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.epost || "")) return "Kontrollera e-postadressen.";
+    if (!o.gdpr) return "Godkänn att vi sparar uppgifterna för bokningen.";
+  }
+  return "";
+}
+
+function visaSteg() {
+  document.querySelectorAll(".step").forEach(s => s.hidden = Number(s.dataset.step) !== steg);
+  [...$("#steps").children].forEach((li, i) => { li.className = i === steg ? "on" : i < steg ? "done" : ""; });
+  $("#back").style.visibility = steg ? "visible" : "hidden";
+  $("#fwd").hidden = steg === 3;
+  $("#send").hidden = steg !== 3;
+  $("#err").textContent = "";
+  if (steg === 2) ritaKalender();
+}
+
+function ritaSammanfattning() {
+  const o = lasForm();
+  const rad = (t, v) => v ? `<dt>${t}</dt><dd>${v}</dd>` : "";
+  $("#sum").innerHTML =
+    rad("Kund", esc(o.kundtyp)) +
+    rad("Fotografering", o.tjanst.map(esc).join("<br>")) +
+    rad("Tillägg", o.tillagg.map(esc).join(", ")) +
+    rad("Objekt", o.adress ? `${esc(o.adress)}, ${esc(o.ort)}<br>${esc(o.objekttyp)}${o.yta ? ", " + o.yta.toLocaleString("sv-SE") + " kvm" : ""}` : "") +
+    rad("Önskade datum", o.datum.map(fmtDag).join("<br>")) +
+    rad("Tid", o.datum.length ? esc(o.fonster) : "");
+  $("#est").innerHTML = tidsblock(o);
+}
+
+function ritaKalender() {
+  const grid = $("#grid");
+  $("#month").textContent = visadManad.toLocaleDateString("sv-SE", { month: "long", year: "numeric" });
+  const forsta = (visadManad.getDay() + 6) % 7; // måndag först
+  const dagar = new Date(visadManad.getFullYear(), visadManad.getMonth() + 1, 0).getDate();
+  let html = ["må", "ti", "on", "to", "fr", "lö", "sö"].map(d => `<span class="dow">${d}</span>`).join("");
+  html += "<span></span>".repeat(forsta);
+  for (let i = 1; i <= dagar; i++) {
+    const d = new Date(visadManad.getFullYear(), visadManad.getMonth(), i);
+    const s = iso(d), t = tillganglighet(d), idx = valdaDatum.indexOf(s);
+    const stangd = t === "stangd" || t === "full";
+    html += `<button type="button" class="day ${t}${idx > -1 ? " sel" : ""}" data-d="${s}" ${stangd ? "disabled" : ""}
+      aria-pressed="${idx > -1}" aria-label="${fmtDag(s)}${stangd ? ", ej bokningsbar" : ""}">${i}${idx > -1 ? `<b>${idx + 1}</b>` : ""}${stangd ? "" : "<i></i>"}</button>`;
+  }
+  grid.innerHTML = html;
+  const idag = new Date(); idag.setDate(1); idag.setHours(0, 0, 0, 0);
+  $("#prev").disabled = visadManad <= idag;
+  $("#chosen").innerHTML = valdaDatum.map((d, i) => `<li>${i + 1}. ${fmtDag(d)}${i === 0 ? " (förstahandsval)" : ""}</li>`).join("");
+}
+
+$("#grid").addEventListener("click", e => {
+  const b = e.target.closest(".day"); if (!b || b.disabled) return;
+  const d = b.dataset.d, i = valdaDatum.indexOf(d);
+  if (i > -1) valdaDatum.splice(i, 1);
+  else if (valdaDatum.length < 3) valdaDatum.push(d);
+  else { $("#err").textContent = "Max tre datum. Klicka på ett valt datum för att ta bort det."; return; }
+  $("#err").textContent = "";
+  ritaKalender(); ritaSammanfattning();
+});
+$("#prev").onclick = () => { visadManad.setMonth(visadManad.getMonth() - 1); ritaKalender(); };
+$("#next").onclick = () => { visadManad.setMonth(visadManad.getMonth() + 1); ritaKalender(); };
+
+$("#fwd").onclick = () => {
+  const fel = validera(steg, lasForm());
+  if (fel) { $("#err").textContent = fel; return; }
+  steg++; visaSteg(); window.scrollTo({ top: 0, behavior: "smooth" });
+};
+$("#back").onclick = () => { steg--; visaSteg(); };
+form.addEventListener("input", ritaSammanfattning);
+form.addEventListener("change", ritaSammanfattning);
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const o = lasForm();
+  const fel = validera(3, o);
+  if (fel) { $("#err").textContent = fel; return; }
+  const alla = laddaBokningar();
+  const nr = Math.max(1040, ...alla.map(b => Number(b.ref.split("-")[1]) || 0)) + 1;
+  delete o.gdpr;
+  const bokning = { ...o, ref: "BF-" + nr, skapad: new Date().toISOString(), status: "ny" };
+  sparaBokningar([bokning, ...alla]);
+  $("#klar-ref").textContent = bokning.ref;
+  $("#klar-epost").textContent = o.epost;
+  form.reset(); valdaDatum = []; aktuellRestid = null; $("#restid").textContent = ""; steg = 0; visaSteg(); ritaSammanfattning();
+  location.hash = "klar";
+});
+
+// ---------- fotografvy ----------
+const STARTTID = { "Förmiddag": 9, "Eftermiddag": 13, "Kvällsljus": 17, "Flexibelt": 9 };
+
+function tider(b) {
+  const start = fromIso(b.valtDatum); start.setHours(STARTTID[b.fonster] ?? 9);
+  const slut = new Date(start.getTime() + (uppskattadTid(b) || 2) * 36e5);
+  const f = d => `${iso(d).replaceAll("-", "")}T${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}00`;
+  return [f(start), f(slut)];
+}
+function titel(b) { return `Foto: ${b.foretag} (${b.ref})`; }
+function beskrivning(b) {
+  return [`${b.tjanst.join(", ")}${b.tillagg.length ? " + " + b.tillagg.join(", ") : ""}`,
+    `Objekt: ${b.objekttyp}${b.yta ? ", " + b.yta + " kvm" : ""}, ${b.bilder} bilder`,
+    b.tilltrade && `Tillträde: ${b.tilltrade}`, b.ovrigt && `Övrigt: ${b.ovrigt}`,
+    `Kontakt: ${b.namn}, ${b.epost}${b.telefon ? ", " + b.telefon : ""}`, `Fotograf: ${b.fotograf}`].filter(Boolean).join("\n");
+}
+function googleLank(b) {
+  const [s, e] = tider(b);
+  const p = new URLSearchParams({ action: "TEMPLATE", text: titel(b), dates: `${s}/${e}`, ctz: "Europe/Stockholm",
+    location: `${b.adress}, ${b.ort}`, details: beskrivning(b) });
+  return "https://calendar.google.com/calendar/render?" + p;
+}
+function laddaNerIcs(b) {
+  const [s, e] = tider(b);
+  const t = v => v.replace(/[\\,;]/g, m => "\\" + m).replace(/\n/g, "\\n");
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bildfabriken//Bokning demo//SV", "BEGIN:VEVENT",
+    `UID:${b.ref}@bildfab.se`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
+    `DTSTART;TZID=Europe/Stockholm:${s}`, `DTEND;TZID=Europe/Stockholm:${e}`,
+    `SUMMARY:${t(titel(b))}`, `LOCATION:${t(b.adress + ", " + b.ort)}`, `DESCRIPTION:${t(beskrivning(b))}`,
+    "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  const a = Object.assign(document.createElement("a"), {
+    href: URL.createObjectURL(new Blob([ics], { type: "text/calendar" })), download: b.ref + ".ics" });
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function mailLank(b) {
+  const text = `Hej ${b.namn.split(" ")[0]}!\n\nVi bekräftar fotografering av ${b.adress}, ${b.ort} den ${fmtDag(b.valtDatum)} (${b.fonster.toLowerCase()}).\n` +
+    `Fotograf: ${b.fotograf}. Uppskattad tid på plats: ${fmtTim(uppskattadTid(b))}.\n\nVänliga hälsningar\nBildfabriken`;
+  return `mailto:${b.epost}?subject=${encodeURIComponent("Bekräftad fotografering " + b.ref)}&body=${encodeURIComponent(text)}`;
+}
+
+const STATUS = { ny: "Ny", bekraftad: "Bekräftad", avbojd: "Avböjd" };
+
+function ritaLista() {
+  const alla = laddaBokningar();
+  const antal = s => alla.filter(b => b.status === s).length;
+  $("#stats").innerHTML = `<span><b>${antal("ny")}</b>nya</span><span><b>${antal("bekraftad")}</b>bekräftade</span>`;
+  if (!alla.length) { $("#list").innerHTML = `<div class="empty">Inga förfrågningar ännu.</div>`; return; }
+  $("#list").innerHTML = alla.map(b => {
+    const act = b.status === "ny" ? `
+      <label>Datum<select data-f="datum">${b.datum.map((d, i) => `<option value="${d}">${i + 1}. ${fmtDag(d)}</option>`).join("")}</select></label>
+      <label>Fotograf<select data-f="fotograf">${FOTOGRAFER.map(f => `<option>${f}</option>`).join("")}</select></label>
+      <div class="links"><button class="btn sm" data-a="bekrafta">Bekräfta</button><button class="btn ghost sm" data-a="avboj">Avböj</button></div>`
+      : b.status === "bekraftad" ? `
+      <div><b style="font-family:var(--mono);color:var(--ink)">${fmtDag(b.valtDatum)}</b><br>${esc(b.fonster)} · ${esc(b.fotograf)}</div>
+      <div class="links">
+        <a class="btn sm" href="${esc(googleLank(b))}" target="_blank" rel="noopener">+ Google Kalender</a>
+        <button class="btn ghost sm" data-a="ics">.ics</button>
+        <a class="btn ghost sm" href="${esc(mailLank(b))}">Mejla kund</a>
+      </div>
+      <button class="btn ghost sm" data-a="angra" style="align-self:flex-start">Ångra</button>`
+      : `<div>Avböjd.</div><button class="btn ghost sm" data-a="angra" style="align-self:flex-start">Ångra</button>`;
+    return `<article class="req" data-ref="${esc(b.ref)}">
+      <div class="body">
+        <div class="meta">${esc(b.ref)} · ${new Date(b.skapad).toLocaleString("sv-SE", { dateStyle: "short", timeStyle: "short" })} · <span class="tag ${b.status}">${STATUS[b.status]}</span></div>
+        <h2>${esc(b.foretag)}</h2>
+        ${tidsblock(b)}
+        <div>${esc(b.namn)} · <a href="mailto:${esc(b.epost)}">${esc(b.epost)}</a>${b.telefon ? " · " + esc(b.telefon) : ""} · ${esc(b.kundtyp)}</div>
+        <ul>
+          <li><b>${esc(b.adress)}, ${esc(b.ort)}</b> (${esc(b.objekttyp)}${b.yta ? ", " + b.yta.toLocaleString("sv-SE") + " kvm" : ""})</li>
+          <li>${b.tjanst.map(esc).join(", ")}${b.tillagg.length ? " + " + b.tillagg.map(esc).join(", ") : ""} · ${esc(b.bilder)} bilder</li>
+          <li>Önskar: ${b.datum.map(fmtDag).join(", ")} · ${esc(b.fonster)}${b.vader ? " · väderberoende" : ""}</li>
+          ${b.projekt ? `<li>Projekt: ${esc(b.projekt)}</li>` : ""}
+          ${b.tilltrade ? `<li>Tillträde: ${esc(b.tilltrade)}</li>` : ""}
+          ${b.ovrigt ? `<li>Övrigt: ${esc(b.ovrigt)}</li>` : ""}
+        </ul>
+      </div>
+      <div class="act">${act}</div>
+    </article>`;
+  }).join("");
+}
+
+$("#list").addEventListener("click", e => {
+  const knapp = e.target.closest("[data-a]"); if (!knapp) return;
+  const kort = knapp.closest(".req");
+  const alla = laddaBokningar();
+  const b = alla.find(x => x.ref === kort.dataset.ref);
+  const a = knapp.dataset.a;
+  if (a === "bekrafta") Object.assign(b, { status: "bekraftad",
+    valtDatum: kort.querySelector('[data-f="datum"]').value, fotograf: kort.querySelector('[data-f="fotograf"]').value });
+  if (a === "avboj") b.status = "avbojd";
+  if (a === "angra") { b.status = "ny"; delete b.valtDatum; delete b.fotograf; }
+  if (a === "ics") return laddaNerIcs(b);
+  sparaBokningar(alla); ritaLista();
+});
+$("#reset").onclick = () => { try { localStorage.removeItem(STORE); } catch {} ritaLista(); };
+
+// ---------- routing ----------
+function route() {
+  const v = location.hash.slice(1) || "boka";
+  const vy = ["boka", "klar", "fotograf"].includes(v) ? v : "boka";
+  for (const id of ["boka", "klar", "fotograf"]) $("#view-" + id).hidden = id !== vy;
+  $("#nav-boka").classList.toggle("on", vy !== "fotograf");
+  $("#nav-fotograf").classList.toggle("on", vy === "fotograf");
+  if (vy === "fotograf") ritaLista();
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+visaSteg(); ritaSammanfattning(); route();
+</script>
+</body>
+</html>

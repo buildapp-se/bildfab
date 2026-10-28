@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google-demo · Bildfabriken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #202124; --text: #3c4043; --muted: #5f6368; --line: #dadce0; --soft: #f1f3f4; --bg: #fff;
+  --blue: #1a73e8; --bluebg: #e8f0fe; --ev: #039be5; --warnbg: #fef7e0; --warn: #b06000; --no: #d93025;
+  --sans: "Roboto", system-ui, sans-serif; --mono: "Roboto Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); }
+h1, h2, h3 { color: var(--ink); margin: 0; font-weight: 400; line-height: 1.3; }
+a { color: var(--blue); }
+button, input, select, textarea { font: inherit; color: var(--ink); }
+input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--blue); outline-offset: -1px; border-color: transparent; }
+label.f { display: block; margin-bottom: 12px; }
+label.f > span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 22px; border-radius: 18px; border: 1px solid var(--blue); background: var(--blue);
+  color: #fff; cursor: pointer; font-weight: 500; text-decoration: none; }
+.btn.sec { background: #fff; color: var(--blue); border-color: var(--line); }
+.btn.no { background: #fff; color: var(--no); border-color: var(--line); }
+.btn:hover { filter: brightness(.96); }
+.ws { font-size: 11px; font-weight: 500; background: var(--warnbg); color: var(--warn); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.hint { margin: -6px 0 12px; color: var(--muted); font-size: 13px; }
+.err { color: var(--no); min-height: 1.4em; margin: 0; }
+
+.demobar { background: #202124; color: #fff; padding: 8px 16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 13px; }
+.demobar b { font-family: var(--mono); letter-spacing: .05em; }
+.demobar nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.demobar a, .demobar button { color: #fff; text-decoration: none; padding: 5px 10px; border: 1px solid #555; border-radius: 4px; background: none; cursor: pointer; font-size: 13px; }
+.demobar a.on { background: #fff; color: #202124; }
+
+/* kund: bokningssida */
+.page { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 44px); }
+.left { padding: 28px; border-right: 1px solid var(--line); }
+.left img { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); object-fit: contain; padding: 4px; }
+.left .who { color: var(--muted); margin: 10px 0 2px; }
+.left h1 { font-size: 26px; margin-bottom: 16px; }
+.left ul { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 10px; }
+.left li { display: flex; gap: 10px; }
+.right { padding: 24px 28px; }
+.wkhead { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.wkhead h2 { font-size: 20px; }
+.wkhead button { border: 0; background: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; color: var(--muted); }
+.wkhead button:hover { background: var(--soft); }
+.wkhead button:disabled { opacity: .3; cursor: default; }
+.week { display: grid; grid-template-columns: repeat(7, minmax(84px, 1fr)); gap: 8px; overflow-x: auto; }
+.col .dh { text-align: center; margin-bottom: 10px; }
+.col .dh small { display: block; font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.col .dh b { font-size: 22px; font-weight: 400; color: var(--ink); }
+.col button { display: block; width: 100%; margin-bottom: 8px; padding: 8px 4px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--blue); font-weight: 500; cursor: pointer; }
+.col button:hover { background: var(--bluebg); border-color: var(--blue); }
+.col .none { font-size: 12px; color: var(--muted); text-align: center; }
+
+.modal-bg { position: fixed; inset: 0; background: rgba(32,33,36,.5); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
+.modal { background: #fff; border-radius: 8px; width: 100%; max-width: 480px; max-height: 92vh; overflow: auto; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.modal h2 { font-size: 22px; margin-bottom: 4px; }
+.modal .when { color: var(--muted); margin-bottom: 18px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.done { max-width: 520px; margin: 48px auto; padding: 0 16px; text-align: center; }
+.done .ico { width: 56px; height: 56px; border-radius: 50%; background: #e6f4ea; color: #137333; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.done h1 { font-size: 26px; margin-bottom: 8px; }
+.done dl { text-align: left; display: grid; grid-template-columns: 100px 1fr; gap: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin: 20px 0; }
+.done dt { color: var(--muted); }
+.done dd { margin: 0; color: var(--ink); }
+
+/* fotograf */
+.cal-app { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 44px); }
+.side { padding: 16px 12px; border-right: 1px solid var(--line); }
+.side .brand { font-size: 20px; color: var(--muted); padding: 4px 12px 16px; }
+.side a { display: flex; justify-content: space-between; padding: 9px 14px; border-radius: 0 18px 18px 0; text-decoration: none; color: var(--text); margin-left: -12px; }
+.side a.on { background: var(--bluebg); color: #1967d2; font-weight: 500; }
+.side a:hover:not(.on) { background: var(--soft); }
+.main { padding: 20px 24px 80px; overflow: auto; }
+.main > h1 { font-size: 22px; margin-bottom: 4px; }
+.sub { color: var(--muted); margin: 0 0 16px; }
+.warnbox { background: var(--warnbg); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: #5f4100; }
+
+.grid { display: grid; grid-template-columns: 50px repeat(7, minmax(90px, 1fr)); border-top: 1px solid var(--line); min-width: 720px; }
+.grid .gh { text-align: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.grid .gh small { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: 500; }
+.grid .gh b { font-size: 22px; font-weight: 400; }
+.grid .gh.today b { background: var(--blue); color: #fff; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; }
+.hours { position: relative; }
+.hours span { display: block; height: 44px; font-size: 10px; color: var(--muted); text-align: right; padding-right: 6px; translate: 0 -7px; }
+.daycol { position: relative; border-left: 1px solid var(--line); background: repeating-linear-gradient(#fff 0 43px, var(--line) 43px 44px); }
+.open { position: absolute; left: 0; right: 0; background: repeating-linear-gradient(45deg, #e8f0fe 0 6px, #f4f8ff 6px 12px); }
+.ev { position: absolute; left: 3px; right: 3px; background: var(--ev); color: #fff; border-radius: 4px; padding: 3px 6px; font-size: 12px; line-height: 1.3; overflow: hidden; cursor: pointer; border: 0; text-align: left; }
+.ev.sel { box-shadow: 0 0 0 2px #202124; }
+.detail { border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-top: 16px; max-width: 560px; }
+.detail h3 { font-size: 18px; margin-bottom: 8px; }
+.detail p { margin: 4px 0; }
+
+.settings { max-width: 720px; }
+.set { border-bottom: 1px solid var(--line); padding: 18px 0; display: grid; grid-template-columns: 220px 1fr; gap: 16px; }
+.set > b { font-weight: 500; color: var(--ink); }
+.set .d { display: grid; grid-template-columns: 70px 40px 1fr; align-items: center; gap: 8px; margin-bottom: 6px; }
+.set .d input[type=time] { width: 110px; }
+.set .d input[type=checkbox], .chk input { width: 18px; height: 18px; accent-color: var(--blue); }
+.chk { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.chk.dis { color: var(--muted); }
+.set select { max-width: 220px; }
+
+.mail { border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 12px; max-width: 720px; }
+.mail .hd { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.mail h3 { font-size: 16px; margin: 4px 0 8px; font-weight: 500; }
+.mail pre { white-space: pre-wrap; font: inherit; margin: 0 0 10px; }
+.rsvp { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 10px; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.tabs a { padding: 10px 14px; text-decoration: none; color: var(--muted); border-bottom: 3px solid transparent; }
+.tabs a.on { color: var(--blue); border-color: var(--blue); font-weight: 500; }
+
+#phone { position: fixed; right: 20px; bottom: 20px; width: 300px; height: 560px; background: #111; border-radius: 40px; padding: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.35); z-index: 20; }
+#phone .scr { height: 100%; border-radius: 30px; background: linear-gradient(160deg, #2d4a6b, #172535); padding: 46px 12px 12px; color: #fff; position: relative; }
+#phone .clock { text-align: center; font-size: 54px; font-weight: 300; line-height: 1; }
+#phone .date { text-align: center; opacity: .8; margin-bottom: 26px; }
+#phone .note { background: rgba(255,255,255,.9); color: #111; border-radius: 16px; padding: 12px; margin-bottom: 8px; font-size: 13px; }
+#phone .note .app { display: flex; justify-content: space-between; font-size: 11px; color: #555; margin-bottom: 4px; }
+#phone .note p { margin: 2px 0 0; }
+#phone .x { position: absolute; top: 14px; right: 16px; background: none; border: 0; color: #fff; font-size: 18px; cursor: pointer; }
+.toast { position: fixed; left: 24px; bottom: 24px; background: #323232; color: #fff; padding: 12px 18px; border-radius: 4px; z-index: 30; }
+
+@media (max-width: 860px) {
+  .page, .cal-app { grid-template-columns: 1fr; }
+  .left { border-right: 0; border-bottom: 1px solid var(--line); }
+  .side { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .side .brand { display: none; }
+  .side a { margin: 0; border-radius: 18px; white-space: nowrap; }
+  .set { grid-template-columns: 1fr; }
+  .row { grid-template-columns: 1fr; }
+  #phone { transform: scale(.8); transform-origin: bottom right; right: 10px; bottom: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="demobar">
+  <span><b>GOOGLE-DEMO</b> · Flödet som Google Kalenders bokningsschema gör det, med Bildfabs inställningar. Återskapat för att kunna klicka runt utan konto.</span>
+  <nav>
+    <a href="#/" id="d-kund">Kundvy</a>
+    <a href="#/kalender" id="d-foto">Fotografvy</a>
+    <a href="../index.html">← Alla alternativ</a>
+    <button type="button" data-act="aterstall">Återställ demo</button>
+  </nav>
+</div>
+<div id="app"></div>
+<div id="modal"></div>
+<div id="phone" hidden></div>
+
+<script src="../restid.js"></script>
+<script>
+const FOTOGRAF = "info@bildfab.se";
+const KEY = "bildfab-google-demo";
+const VARSEL_H = 24;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const fromIso = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const hhmm = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+const minuter = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
+const langt = s => fromIso(s).toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "long" });
+const kort = s => fromIso(s).toLocaleDateString("sv-SE", { weekday: "short", day: "numeric", month: "short" });
+const langd = m => m % 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m / 60} h`;
+const VECKODAGAR = ["sön", "mån", "tis", "ons", "tor", "fre", "lör"];
+
+function vardag(n) {
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  for (let k = 0; k < n;) { d.setDate(d.getDate() + 1); if (d.getDay() % 6) k++; }
+  return iso(d);
+}
+function mandag(offsetVeckor) {
+  const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7 + offsetVeckor * 7); return d;
+}
+
+function standard() {
+  const dag = (pa, fran, till) => ({ pa, fran, till });
+  return {
+    titel: "Fotografering bostad", min: 120, buffert: 30, maxPerDag: 3,
+    schema: { 1: dag(true, "08:00", "16:00"), 2: dag(true, "08:00", "16:00"), 3: dag(true, "08:00", "16:00"),
+      4: dag(true, "08:00", "16:00"), 5: dag(true, "08:00", "14:00"), 6: dag(false, "10:00", "14:00"), 0: dag(false, "10:00", "14:00") },
+    bokningar: [
+      { id: "g1", datum: vardag(2), start: 600, min: 120, fornamn: "Erik", efternamn: "Demo", epost: "erik@demomaklarna.se", telefon: "070-000 00 01",
+        adress: "Björkvägen 4, Umeå", firma: "Demomäklarna", tilltrade: "Säljaren är hemma" },
+    ],
+    mejl: [],
+  };
+}
+let S = ladda();
+function ladda() { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.bokningar) return s; } catch {} return standard(); }
+function spara() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+
+// Google lägger tider efter varandra: längd + buffert. Ingen preliminär status finns, en bokning är en bokning.
+function lediga(datum) {
+  const d = fromIso(datum), dag = S.schema[d.getDay()];
+  if (!dag.pa) return [];
+  const dagens = S.bokningar.filter(b => b.datum === datum);
+  if (S.maxPerDag && dagens.length >= S.maxPerDag) return [];
+  const grans = Date.now() + VARSEL_H * 36e5, ut = [];
+  for (let t = minuter(dag.fran); t + S.min <= minuter(dag.till); t += S.min + S.buffert) {
+    const start = new Date(d); start.setMinutes(t);
+    if (start < grans) continue;
+    if (dagens.some(b => t < b.start + b.min + S.buffert && b.start < t + S.min + S.buffert)) continue;
+    ut.push(t);
+  }
+  return ut;
+}
+
+const V = { vecka: 0, kalVecka: 0, valt: null, mejlflik: "foto", restid: null };
+const namn = b => `${b.fornamn} ${b.efternamn}`;
+const hitta = id => S.bokningar.find(b => b.id === id);
+const detaljer = b => `${S.titel}\n${langt(b.datum)}, ${hhmm(b.start)}–${hhmm(b.start + b.min)}\nAdress: ${b.adress}` +
+  (b.restid ? `\nRestid: ${restidText(b.restid)}` : "") +
+  `\nKontakt: ${namn(b)}${b.firma ? ", " + b.firma : ""}, ${b.epost}, ${b.telefon}` + (b.tilltrade ? `\nTillträde: ${b.tilltrade}` : "");
+const mejl = (till, amne, text, bokning, typ) => S.mejl.push({ id: "m" + Date.now() + Math.random(), till, amne, text, bokning, typ, tid: Date.now() });
+
+function toast(t) {
+  const el = Object.assign(document.createElement("div"), { className: "toast", textContent: t });
+  document.body.append(el); setTimeout(() => el.remove(), 3000);
+}
+function avboka(id, av) {
+  const b = hitta(id); if (!b) return;
+  S.bokningar = S.bokningar.filter(x => x.id !== id);
+  if (av === "kund") mejl(FOTOGRAF, `Avböjd: ${S.titel} (${namn(b)}), ${kort(b.datum)} ${hhmm(b.start)}`, `${namn(b)} har tackat nej till inbjudan. Tiden är bokningsbar igen.\n\n${detaljer(b)}`, null, "info");
+  else mejl(b.epost, `Inställd: ${S.titel}, ${kort(b.datum)} ${hhmm(b.start)}`, `Bildfabriken har ställt in bokningen.\n\n${detaljer(b)}`, null, "info");
+  spara(); toast("Bokningen är borttagen och tiden är ledig igen.");
+}
+
+// ---------- kund ----------
+const logga = `<img src="../mvp/assets/Bildfabriken-logo.png" alt="">`;
+function vyBokningssida() {
+  const start = mandag(V.vecka);
+  const dagar = [...Array(7)].map((_, i) => { const d = new Date(start); d.setDate(d.getDate() + i); return d; });
+  const slut = dagar[6];
+  return `<div class="page">
+    <div class="left">${logga}<div class="who">Bildfabriken</div><h1>${esc(S.titel)}</h1>
+      <ul><li>🕒 ${langd(S.min)}</li><li>📍 Objektets adress (anges vid bokning)</li><li>📷 Mäklarfoto, interiör och exteriör</li></ul>
+      <p style="color:var(--muted)">Välj en tid som passar. Bokningen är klar direkt och du får en kalenderinbjudan via e-post.</p>
+    </div>
+    <div class="right">
+      <div class="wkhead">
+        <button data-act="vecka" data-d="-1" ${V.vecka <= 0 ? "disabled" : ""} aria-label="Föregående vecka">‹</button>
+        <button data-act="vecka" data-d="1" aria-label="Nästa vecka">›</button>
+        <h2>${start.toLocaleDateString("sv-SE", { day: "numeric", month: "short" })} – ${slut.toLocaleDateString("sv-SE", { day: "numeric", month: "short", year: "numeric" })}</h2>
+      </div>
+      <p class="sub">Tider i Europe/Stockholm</p>
+      <div class="week">${dagar.map(d => {
+        const s = iso(d), tider = lediga(s);
+        return `<div class="col"><div class="dh"><small>${VECKODAGAR[d.getDay()]}</small><b>${d.getDate()}</b></div>
+          ${tider.length ? tider.map(t => `<button data-act="valjtid" data-d="${s}" data-t="${t}">${hhmm(t)}</button>`).join("") : `<div class="none">Ingen tillgänglighet</div>`}</div>`;
+      }).join("")}</div>
+    </div>
+  </div>`;
+}
+
+function visaFormular(datum, t) {
+  $("#modal").innerHTML = `<div class="modal-bg"><form class="modal" id="bokform" data-d="${datum}" data-t="${t}" novalidate>
+    <h2>Boka tid</h2>
+    <div class="when">${esc(S.titel)} · ${esc(langt(datum))}, ${hhmm(t)}–${hhmm(t + S.min)}</div>
+    <div class="row">
+      <label class="f"><span>Förnamn *</span><input name="fornamn" required autocomplete="given-name"></label>
+      <label class="f"><span>Efternamn *</span><input name="efternamn" required autocomplete="family-name"></label>
+    </div>
+    <label class="f"><span>E-postadress *</span><input name="epost" type="email" required autocomplete="email"></label>
+    <label class="f"><span>Telefonnummer *</span><input name="telefon" type="tel" required autocomplete="tel"></label>
+    <label class="f"><span>Objektets adress * (egen fråga)</span><input name="adress" id="adress" required placeholder="Gata och nummer, ort"></label>
+    <p class="hint" id="restid" aria-live="polite"></p>
+    <label class="f"><span>Mäklarfirma (egen fråga)</span><input name="firma"></label>
+    <label class="f"><span>Tillträde (egen fråga)</span><input name="tilltrade" placeholder="Säljaren hemma, nyckel hos mäklaren ..."></label>
+    <p class="err" id="err" role="alert"></p>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+      <button type="button" class="btn sec" data-act="stangmodal">Avbryt</button><button class="btn" type="submit">Boka</button>
+    </div>
+  </form></div>`;
+  V.restid = null;
+  kopplaRestid($("#adress"), $("#restid"), r => V.restid = r, ". (Demotillägg: Google kan inte räkna restid.)");
+  $("#bokform input").focus();
+}
+
+function vyBokad(b) {
+  if (!b) return `<div class="done"><h1>Bokningen finns inte längre</h1><p><a href="#/">Till bokningssidan</a></p></div>`;
+  return `<div class="done"><div class="ico">✓</div><h1>Du har bokat</h1>
+    <p>En kalenderinbjudan har skickats till ${esc(b.epost)}.</p>
+    <dl><dt>Vad</dt><dd>${esc(S.titel)} med Bildfabriken</dd><dt>När</dt><dd>${esc(langt(b.datum))}<br>${hhmm(b.start)}–${hhmm(b.start + b.min)}</dd>
+      <dt>Var</dt><dd>${esc(b.adress)}</dd></dl>
+    <p style="color:var(--muted)">Vill du avboka? Svara "Nej" på inbjudan eller använd avbokningslänken i bekräftelsemejlet.</p>
+    <a class="btn sec" href="#/">Boka en till tid</a></div>`;
+}
+
+// ---------- fotograf ----------
+function app(aktiv, innehall) {
+  const l = (h, t) => `<a href="#/${h}" class="${aktiv === h ? "on" : ""}">${t}</a>`;
+  return `<div class="cal-app"><aside class="side"><div class="brand">Kalender</div>
+    ${l("kalender", "Veckovy")}${l("installningar", "Bokningsschema")}${l("inkorg", "Inkorg (demo)")}<a href="#/">Öppna bokningssidan ↗</a></aside>
+    <section class="main">${innehall}</section></div>`;
+}
+const VARNING = `<div class="warnbox"><b>Så fungerar Google:</b> kunden bokar direkt. Det finns ingen preliminär bokning och ingen ja/nej-knapp.
+  Vill fotografen inte ta jobbet måste bokningen tas bort i efterhand, och då får kunden ett mejl om att den är inställd.</div>`;
+
+function vyKalender() {
+  const start = mandag(V.kalVecka), H0 = 7, H1 = 18, PX = 44;
+  const dagar = [...Array(7)].map((_, i) => { const d = new Date(start); d.setDate(d.getDate() + i); return d; });
+  const idag = iso(new Date());
+  const valt = hitta(V.valt);
+  return app("kalender", `<h1>Veckovy</h1><p class="sub">Randigt = bokningsbar tid enligt bokningsschemat. Blått = bokat.</p>${VARNING}
+    <div class="wkhead"><button data-act="kalvecka" data-d="-1" aria-label="Föregående vecka">‹</button><button data-act="kalvecka" data-d="1" aria-label="Nästa vecka">›</button>
+      <h2>${start.toLocaleDateString("sv-SE", { month: "long", year: "numeric" })}</h2></div>
+    <div style="overflow-x:auto"><div class="grid">
+      <div></div>${dagar.map(d => `<div class="gh ${iso(d) === idag ? "today" : ""}"><small>${VECKODAGAR[d.getDay()]}</small><b>${d.getDate()}</b></div>`).join("")}
+      <div class="hours">${[...Array(H1 - H0)].map((_, i) => `<span>${i ? pad(H0 + i) + ":00" : ""}</span>`).join("")}</div>
+      ${dagar.map(d => {
+        const s = iso(d), sch = S.schema[d.getDay()];
+        const y = m => (m / 60 - H0) * PX;
+        return `<div class="daycol" style="height:${(H1 - H0) * PX}px">
+          ${sch.pa ? `<div class="open" style="top:${y(minuter(sch.fran))}px;height:${y(minuter(sch.till)) - y(minuter(sch.fran))}px"></div>` : ""}
+          ${S.bokningar.filter(b => b.datum === s).map(b => `<button class="ev ${b.id === V.valt ? "sel" : ""}" data-act="valjev" data-id="${b.id}" style="top:${y(b.start)}px;height:${b.min / 60 * PX - 2}px">
+            <b>${esc(S.titel)} (${esc(namn(b))})</b><br>${hhmm(b.start)}–${hhmm(b.start + b.min)}<br>${esc(b.adress)}</button>`).join("")}
+        </div>`;
+      }).join("")}
+    </div></div>
+    ${valt ? `<div class="detail"><h3>${esc(S.titel)} (${esc(namn(valt))})</h3>
+      <p>${esc(langt(valt.datum))} · ${hhmm(valt.start)}–${hhmm(valt.start + valt.min)}</p>
+      <p>📍 ${esc(valt.adress)}${valt.restid ? `<br>🚗 ${esc(restidText(valt.restid))}` : ""}</p>
+      <p>👤 ${esc(namn(valt))}${valt.firma ? ", " + esc(valt.firma) : ""} · ${esc(valt.epost)} · ${esc(valt.telefon)}</p>
+      ${valt.tilltrade ? `<p>🔑 ${esc(valt.tilltrade)}</p>` : ""}
+      <p style="margin-top:12px"><button class="btn no" data-act="fotoavboka" data-id="${valt.id}">Ta bort bokningen</button></p></div>` : ""}`);
+}
+
+function vyInstallningar() {
+  const ordning = [1, 2, 3, 4, 5, 6, 0];
+  return app("installningar", `<h1>Bokningsschema</h1><p class="sub">Inställningarna som styr bokningssidan. Ändringar syns direkt i kundvyn.</p>
+    <div class="settings">
+      <div class="set"><b>Titel</b><input value="${esc(S.titel)}" data-set="titel"></div>
+      <div class="set"><b>Bokningens längd</b><select data-set="min">${[60, 90, 120, 150, 180].map(m => `<option value="${m}" ${S.min === m ? "selected" : ""}>${langd(m)}</option>`).join("")}</select></div>
+      <div class="set"><b>Allmän tillgänglighet</b><div>${ordning.map(d => {
+        const s = S.schema[d];
+        return `<div class="d"><b style="text-transform:capitalize;font-weight:500">${VECKODAGAR[d]}</b><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VECKODAGAR[d]} tillgänglig">
+          ${s.pa ? `<span><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till"></span>` : `<span style="color:var(--muted)">Inte tillgänglig</span>`}</div>`;
+      }).join("")}</div></div>
+      <div class="set"><b>Bokningsfönster</b><div>Max 60 dagar framåt, minst 24 timmars varsel</div></div>
+      <div class="set"><b>Buffert mellan bokningar</b><select data-set="buffert">${[0, 15, 30, 45, 60].map(m => `<option value="${m}" ${S.buffert === m ? "selected" : ""}>${m} min</option>`).join("")}</select></div>
+      <div class="set"><b>Max bokningar per dag</b><select data-set="maxPerDag">${[0, 2, 3, 4, 5].map(n => `<option value="${n}" ${S.maxPerDag === n ? "selected" : ""}>${n || "Ingen gräns"}</option>`).join("")}</select></div>
+      <div class="set"><b>Kontrollera kalendrar</b><div class="chk"><input type="checkbox" checked disabled> Upptagen tid i fotografens kalender blockerar bokningssidan</div></div>
+      <div class="set"><b>Bokningsformulär</b><div>Förnamn, efternamn, e-post (alltid)<br>+ Telefon, Objektets adress, Mäklarfirma, Tillträde (egna frågor)</div></div>
+      <div class="set"><b>Kräver Google Workspace</b><div>
+        <div class="chk dis"><input type="checkbox" disabled> Flera bokningssidor (t.ex. lägenhet 1,5 h och villa 2,5 h) <span class="ws">Workspace</span></div>
+        <div class="chk dis"><input type="checkbox" disabled> E-postpåminnelser till kunden <span class="ws">Workspace</span></div>
+        <div class="chk dis"><input type="checkbox" disabled> Verifiera kundens e-post innan bokning <span class="ws">Workspace</span></div>
+        <div class="chk dis"><input type="checkbox" disabled> Betalning via Stripe <span class="ws">Workspace</span></div>
+      </div></div>
+      <div class="set"><b>Finns inte alls</b><div style="color:var(--no)">Preliminär bokning, godkänn/avböj, restid som påverkar lediga tider.</div></div>
+    </div>`);
+}
+
+function vyInkorg() {
+  const foto = V.mejlflik === "foto";
+  const lista = S.mejl.filter(m => (m.till === FOTOGRAF) === foto).sort((a, b) => b.tid - a.tid);
+  return app("inkorg", `<h1>Inkorg (demo)</h1><p class="sub">De mejl Google skickar i flödet.</p>
+    <div class="tabs"><a href="#" data-act="mejlflik" data-f="foto" class="${foto ? "on" : ""}">Fotografen</a><a href="#" data-act="mejlflik" data-f="kund" class="${foto ? "" : "on"}">Kunderna</a></div>
+    ${lista.map(m => {
+      const b = hitta(m.bokning);
+      return `<div class="mail"><div class="hd"><span>Från: Google Kalender · Till: ${esc(m.till)}</span><span>${new Date(m.tid).toLocaleString("sv-SE", { dateStyle: "short", timeStyle: "short" })}</span></div>
+      <h3>${esc(m.amne)}</h3><pre>${esc(m.text)}</pre>
+      ${m.typ === "inbjudan" && b ? `<div class="rsvp">Delta? <button class="btn sec">Ja</button><button class="btn sec">Kanske</button><button class="btn no" data-act="kundnej" data-id="${b.id}">Nej (avbokar)</button></div>` : ""}</div>`;
+    }).join("") || `<p class="sub">Inga mejl ännu. Boka en tid i kundvyn.</p>`}`);
+}
+
+function visaTelefon(b) {
+  const nu = new Date();
+  $("#phone").innerHTML = `<div class="scr"><button class="x" data-act="stangtelefon" aria-label="Stäng">×</button>
+    <div class="clock">${pad(nu.getHours())}:${pad(nu.getMinutes())}</div>
+    <div class="date">${nu.toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "long" })}</div>
+    <div class="note"><div class="app"><b>Google Kalender</b><span>nu</span></div>
+      <b>Ny bokning: ${esc(namn(b))}</b><p>${esc(kort(b.datum))} ${hhmm(b.start)} · ${esc(b.adress)}${b.restid ? `<br>🚗 ${b.restid.min} min från kontoret` : ""}</p></div>
+    <div class="note"><div class="app"><b>Gmail</b><span>nu</span></div>
+      <b>Ny bokning: ${esc(S.titel)}</b><p>Bara information. Tiden är redan bokad, det finns ingen ja/nej-knapp.</p></div>
+  </div>`;
+  $("#phone").hidden = false;
+}
+
+// ---------- routing och händelser ----------
+function render() {
+  const [, a, b] = (location.hash.slice(1) || "/").split("/");
+  const foto = ["kalender", "installningar", "inkorg"].includes(a);
+  $("#app").innerHTML = a === "bokad" ? vyBokad(hitta(b)) : a === "kalender" ? vyKalender() : a === "installningar" ? vyInstallningar()
+    : a === "inkorg" ? vyInkorg() : vyBokningssida();
+  $("#d-kund").classList.toggle("on", !foto);
+  $("#d-foto").classList.toggle("on", foto);
+}
+addEventListener("hashchange", () => { render(); scrollTo(0, 0); });
+
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const { act, id } = el.dataset;
+  if (act === "vecka") V.vecka = Math.max(0, V.vecka + Number(el.dataset.d));
+  else if (act === "kalvecka") V.kalVecka += Number(el.dataset.d);
+  else if (act === "valjtid") return visaFormular(el.dataset.d, Number(el.dataset.t));
+  else if (act === "stangmodal") { $("#modal").innerHTML = ""; return; }
+  else if (act === "valjev") V.valt = id;
+  else if (act === "fotoavboka") { avboka(id, "foto"); V.valt = null; }
+  else if (act === "kundnej") avboka(id, "kund");
+  else if (act === "mejlflik") { e.preventDefault(); V.mejlflik = el.dataset.f; }
+  else if (act === "stangtelefon") { $("#phone").hidden = true; return; }
+  else if (act === "aterstall") { try { localStorage.removeItem(KEY); } catch {} S = ladda(); $("#phone").hidden = true; toast("Demodata återställd."); }
+  render();
+});
+
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = e.target; if (f.id !== "bokform") return;
+  const v = Object.fromEntries([...new FormData(f)].map(([k, x]) => [k, String(x).trim()]));
+  if (!v.fornamn || !v.efternamn || !v.telefon || !v.adress) return $("#err").textContent = "Fyll i alla fält med *.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.epost)) return $("#err").textContent = "Kontrollera e-postadressen.";
+  const datum = f.dataset.d, t = Number(f.dataset.t);
+  if (!lediga(datum).includes(t)) return $("#err").textContent = "Tiden hann bli bokad. Välj en annan.";
+  const b = { id: "g" + Date.now(), datum, start: t, min: S.min, ...v, restid: V.restid };
+  S.bokningar.push(b);
+  mejl(b.epost, `Inbjudan: ${S.titel} med Bildfabriken, ${kort(datum)} ${hhmm(t)}`, `Din bokning är klar.\n\n${detaljer(b)}\n\nAvboka: svara Nej på inbjudan.`, b.id, "inbjudan");
+  mejl(FOTOGRAF, `Ny bokning: ${S.titel} (${namn(b)}), ${kort(datum)} ${hhmm(t)}`, `${namn(b)} har bokat en tid.\n\n${detaljer(b)}`, b.id, "info");
+  spara();
+  $("#modal").innerHTML = "";
+  V.kalVecka = Math.floor((fromIso(datum) - mandag(0) + 432e5) / (7 * 864e5)); // fotografvyn visar veckan med nya bokningen (+12 h tål sommartidsbyte)
+  V.valt = b.id;
+  visaTelefon(b);
+  location.hash = "#/bokad/" + b.id;
+});
+
+document.addEventListener("change", e => {
+  const el = e.target;
+  if (el.dataset.set) S[el.dataset.set] = el.dataset.set === "titel" ? el.value : Number(el.value);
+  else if (el.dataset.sched) {
+    const dag = S.schema[el.dataset.sched];
+    if (el.dataset.k === "pa") dag.pa = el.checked; else if (el.value) dag[el.dataset.k] = el.value;
+    if (minuter(dag.till) <= minuter(dag.fran)) dag.till = hhmm(minuter(dag.fran) + 60);
+  } else return;
+  spara(); render(); toast("Sparat.");
+});
+
+render();
+</script>
+</body>
+</html>

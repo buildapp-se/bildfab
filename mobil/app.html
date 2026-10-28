@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Bildfab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root { --ink: #000; --text: #3d3d3d; --muted: #82858f; --line: #e6e7ea; --soft: #f3f4f6;
+  --ok: #1f7a4d; --okbg: #dcf3e6; --pend: #a85a12; --pendbg: #fdf0dc; --no: #c62828; --nobg: #fde2e2;
+  --mono: "Roboto Mono", ui-monospace, monospace; --sans: "Roboto", system-ui, sans-serif; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { margin: 0; background: #fff; color: var(--text); font: 15px/1.45 var(--sans); display: flex; flex-direction: column; }
+h1, h2, h3 { font-family: var(--mono); color: var(--ink); margin: 0; line-height: 1.2; }
+button, input { font: inherit; color: var(--ink); }
+input { width: 100%; padding: 12px; border: 1px solid #cfd2d7; border-radius: 10px; background: #fff; font-size: 16px; }
+input:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
+
+.top { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+.top img { width: 34px; height: 34px; }
+.top h1 { font-size: 17px; }
+.top small { display: block; color: var(--muted); font-size: 12px; font-family: var(--sans); font-weight: 400; }
+main { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
+.tabs { display: flex; border-top: 1px solid var(--line); background: #fff; padding-bottom: env(safe-area-inset-bottom); }
+.tabs button { flex: 1; border: 0; background: none; padding: 10px 0 12px; font-size: 11px; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; }
+.tabs button i { font-style: normal; font-size: 20px; line-height: 1; }
+.tabs button.on { color: var(--ink); font-weight: 700; }
+.tabs .n { position: absolute; top: 4px; left: 55%; background: var(--no); color: #fff; border-radius: 9px; font-size: 10px; padding: 1px 6px; font-weight: 700; }
+
+.sec { margin-bottom: 22px; }
+.sec > h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.pk { display: grid; gap: 8px; }
+.pk button { display: flex; justify-content: space-between; align-items: center; text-align: left; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.pk button b { display: block; color: var(--ink); }
+.pk button small { color: var(--muted); }
+.pk button span { font-family: var(--mono); font-size: 13px; }
+.pk button.on { border: 2px solid var(--ink); padding: 11px 13px; }
+.hint { font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.chips button { flex: 0 0 auto; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 8px 12px; text-align: center; min-width: 58px; }
+.chips button small { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; }
+.chips button b { font-family: var(--mono); font-size: 17px; color: var(--ink); }
+.chips button:disabled { opacity: .35; }
+.chips button.on { background: var(--ink); border-color: var(--ink); }
+.chips button.on b, .chips button.on small { color: #fff; }
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.slots button { padding: 11px 0; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-family: var(--mono); font-weight: 700; }
+.slots button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.none { color: var(--muted); font-size: 14px; }
+.me { display: flex; justify-content: space-between; align-items: center; background: var(--soft); border-radius: 12px; padding: 12px 14px; }
+.me button { border: 0; background: none; text-decoration: underline; color: var(--muted); }
+.grid2 { display: grid; gap: 8px; }
+
+.tot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; background: var(--soft); border-radius: 14px; padding: 12px 14px; margin-top: 10px; }
+.tot span { display: block; font: 500 10px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.tot b { font: 700 15px var(--mono); color: var(--ink); }
+.tot .sum b { font-size: 19px; }
+
+.cta { position: fixed; left: 0; right: 0; bottom: 64px; padding: 12px 16px; background: linear-gradient(transparent, #fff 30%); }
+.btn { width: 100%; border: 0; border-radius: 14px; background: var(--ink); color: #fff; padding: 15px; font: 700 15px var(--mono); }
+.btn:disabled { background: #b9bcc2; }
+.btn.sec { background: #fff; color: var(--ink); border: 1px solid #cfd2d7; }
+.err { color: var(--no); font-size: 13px; text-align: center; margin: 6px 0 0; min-height: 1em; }
+
+.card { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.card h2 { font-size: 16px; margin: 4px 0 2px; }
+.card p { margin: 2px 0; font-size: 14px; }
+.badge { display: inline-block; font: 700 10px var(--mono); text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 6px; }
+.badge.pending { background: var(--pendbg); color: var(--pend); }
+.badge.accepted { background: var(--okbg); color: var(--ok); }
+.badge.rejected, .badge.cancelled { background: var(--nobg); color: var(--no); }
+.yn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.yn button { padding: 14px; border-radius: 12px; border: 0; font: 700 16px var(--mono); }
+.yn .ja { background: var(--ok); color: #fff; }
+.yn .nej { background: var(--nobg); color: var(--no); }
+.reasons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.reasons button { border: 1px solid #cfd2d7; background: #fff; border-radius: 16px; padding: 7px 12px; font-size: 13px; }
+.day { margin-bottom: 18px; }
+.day > div:first-child { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.day h3 { font-size: 14px; text-transform: capitalize; }
+.day .dt { font: 700 13px var(--mono); color: var(--muted); }
+.job { display: grid; grid-template-columns: 56px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.job .t { font: 700 15px var(--mono); color: var(--ink); }
+.job p { margin: 0; font-size: 13px; }
+.job a { color: var(--ink); }
+.sched .d { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.sched .d b { text-transform: capitalize; }
+.sched input[type=time] { width: 92px; padding: 6px; font-size: 14px; }
+.switch { position: relative; width: 46px; height: 28px; flex: 0 0 auto; }
+.switch input { opacity: 0; position: absolute; inset: 0; margin: 0; z-index: 1; }
+.switch span { position: absolute; inset: 0; background: #cfd2d7; border-radius: 14px; transition: .15s; }
+.switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: .15s; }
+.switch input:checked + span { background: var(--ok); }
+.switch input:checked + span::after { left: 21px; }
+
+.install { display: flex; gap: 10px; align-items: center; background: var(--ink); color: #fff; border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; }
+.install img { width: 36px; height: 36px; background: #fff; border-radius: 8px; }
+.install button { margin-left: auto; border: 0; background: #fff; color: #000; border-radius: 8px; padding: 6px 10px; font-weight: 700; }
+
+/* push-banner, som iOS/Android-notis */
+.push { position: fixed; top: 8px; left: 8px; right: 8px; background: rgba(250,250,250,.97); border-radius: 18px; padding: 12px 14px; box-shadow: 0 8px 30px rgba(0,0,0,.25);
+  z-index: 50; display: grid; grid-template-columns: 38px 1fr; gap: 10px; animation: ned .35s ease-out; border: 0; text-align: left; width: auto; }
+@keyframes ned { from { transform: translateY(-120%); } }
+.push img { width: 38px; height: 38px; border-radius: 9px; border: 1px solid var(--line); }
+.push .app { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.push b { display: block; color: var(--ink); font-size: 14px; }
+.push p { margin: 0; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="top" id="top"></div>
+<main id="main"></main>
+<nav class="tabs" id="tabs"></nav>
+<div id="pushyta"></div>
+
+<script src="../restid.js"></script>
+<script>
+const PAKET = [
+  { id: "lgh", namn: "Lägenhet", min: 90, info: "Upp till 25 bilder" },
+  { id: "villa", namn: "Villa / radhus", min: 150, info: "30–40 bilder" },
+  { id: "villa-d", namn: "Villa + drönare", min: 180, info: "Villa + 5–8 drönarbilder" },
+];
+const STANDARD_RESA = 30; // antagen restid enkel väg när adressen saknas, minuter
+const KEY = "bildfab-mobil-demo";
+const ROLL = new URLSearchParams(location.search).get("roll") === "fotograf" ? "fotograf" : "maklare";
+
+// ---------- hjälpare ----------
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const fromIso = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const hhmm = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+const minuter = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
+const fmtMin = m => { const h = Math.floor(m / 60), r = Math.round(m % 60); return h ? `${h} h${r ? " " + r + " min" : ""}` : `${r} min`; };
+const kort = s => fromIso(s).toLocaleDateString("sv-SE", { weekday: "short", day: "numeric", month: "short" });
+const lang = s => fromIso(s).toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "long" });
+const paket = id => PAKET.find(p => p.id === id);
+const resa = b => b.restid?.min ?? STANDARD_RESA;
+const VD = ["sön", "mån", "tis", "ons", "tor", "fre", "lör"];
+const logga = `<img src="../mvp/assets/Bildfabriken-logo.png" alt="">`;
+
+function vardag(n) { const d = new Date(); d.setHours(0, 0, 0, 0); for (let k = 0; k < n;) { d.setDate(d.getDate() + 1); if (d.getDay() % 6) k++; } return iso(d); }
+
+// ---------- data, delad mellan båda telefonerna via localStorage ----------
+function standard() {
+  const dag = (pa, fran, till) => ({ pa, fran, till });
+  return {
+    schema: { 1: dag(true, "08:00", "16:00"), 2: dag(true, "08:00", "16:00"), 3: dag(true, "08:00", "16:00"), 4: dag(true, "08:00", "16:00"),
+      5: dag(true, "08:00", "14:00"), 6: dag(false, "10:00", "14:00"), 0: dag(false, "10:00", "14:00") },
+    bokningar: [
+      { id: "s1", paket: "villa", datum: vardag(2), start: 600, min: 150, status: "accepted", adress: "Kungsgatan 50, Umeå", restid: null,
+        namn: "Erik Demo", firma: "Demomäklarna", epost: "erik@demomaklarna.se", telefon: "070-000 00 01", skapad: Date.now() - 864e5 },
+      { id: "s2", paket: "lgh", datum: vardag(3), start: 540, min: 90, status: "pending", adress: "Västra Esplanaden 8, Umeå", restid: null,
+        namn: "Anna Exempel", firma: "Exempel Mäklare", epost: "anna@exempelmaklare.se", telefon: "070-000 00 02", skapad: Date.now() - 36e5 },
+    ],
+  };
+}
+function ladda() { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.bokningar) return s; } catch {} return standard(); }
+function spara() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+let S = ladda();
+
+// Lediga starttider. Här styr restiden: fotografen ska hinna köra dit och tillbaka inom arbetsdagen,
+// och resan till och från varje jobb får inte krocka med andra jobb.
+// ponytail: räknar resa via kontoret, inte direkt mellan två jobb. Uppgradering: OSRM mellan föregående och nästa adress.
+function lediga(minLangd, datum, resaMin) {
+  const d = fromIso(datum), dag = S.schema[d.getDay()];
+  if (!dag.pa) return [];
+  const grans = Date.now() + 24 * 36e5, ut = [];
+  const upptagna = S.bokningar.filter(b => b.datum === datum && (b.status === "pending" || b.status === "accepted"));
+  // första start: när fotografen hunnit fram, avrundat uppåt till halvtimme
+  for (let t = Math.ceil((minuter(dag.fran) + resaMin) / 30) * 30; t + minLangd + resaMin <= minuter(dag.till); t += 30) {
+    const start = new Date(d); start.setMinutes(t);
+    if (start < grans) continue;
+    if (upptagna.some(b => t - resaMin < b.start + b.min + resa(b) && b.start - resa(b) < t + minLangd + resaMin)) continue;
+    ut.push(t);
+  }
+  return ut;
+}
+
+// ---------- push-banner ----------
+function push(rubrik, text, vid) {
+  const el = document.createElement("button");
+  el.className = "push";
+  el.innerHTML = `${logga}<div><div class="app"><span>Bildfab</span><span>nu</span></div><b>${esc(rubrik)}</b><p>${esc(text)}</p></div>`;
+  el.onclick = () => { el.remove(); vid?.(); };
+  $("#pushyta").replaceChildren(el);
+  navigator.vibrate?.(150);
+  setTimeout(() => el.remove(), 7000);
+}
+
+// ---------- MÄKLARE ----------
+const M = { flik: "boka", paket: "villa", adress: "", restid: null, datum: null, tid: null, redigera: false, installera: true };
+let profil = (() => { try { return JSON.parse(localStorage.getItem(KEY + "-profil")) || null; } catch { return null; } })();
+const sparaProfil = () => { try { localStorage.setItem(KEY + "-profil", JSON.stringify(profil)); } catch {} };
+
+function makTop() {
+  $("#top").innerHTML = `${logga}<h1>Boka foto<small>Bildfabriken · Umeå</small></h1>`;
+}
+function makTabs() {
+  const mina = profil ? S.bokningar.filter(b => b.epost === profil.epost).length : 0;
+  $("#tabs").innerHTML = `<button data-flik="boka" class="${M.flik === "boka" ? "on" : ""}"><i>＋</i>Boka</button>
+    <button data-flik="mina" class="${M.flik === "mina" ? "on" : ""}"><i>☰</i>Mina bokningar${mina ? `<span class="n" style="background:var(--ink)">${mina}</span>` : ""}</button>`;
+}
+function makDelar() {
+  const p = paket(M.paket), r = M.restid?.min ?? STANDARD_RESA;
+  const dagar = []; for (let i = 1; dagar.length < 15 && i < 40; i++) { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); if (S.schema[d.getDay()].pa) dagar.push(iso(d)); }
+  const ledigaPerDag = Object.fromEntries(dagar.map(d => [d, lediga(p.min, d, r)]));
+  if (!M.datum || !ledigaPerDag[M.datum]?.length) M.datum = dagar.find(d => ledigaPerDag[d].length) || null;
+  const tider = M.datum ? ledigaPerDag[M.datum] : [];
+  if (!tider.includes(M.tid)) M.tid = null;
+  $("#tot").innerHTML = `<div><span>Fotografering</span><b>${fmtMin(p.min)}</b></div><div><span>Restid t/r</span><b>${M.restid ? fmtMin(M.restid.min * 2) : "–"}</b></div>
+    <div class="sum"><span>Total tid</span><b>${fmtMin(p.min + (M.restid ? M.restid.min * 2 : 0))}</b></div>`;
+  $("#dagar").innerHTML = dagar.map(d => { const x = fromIso(d); return `<button data-dag="${d}" class="${d === M.datum ? "on" : ""}" ${ledigaPerDag[d].length ? "" : "disabled"}><small>${VD[x.getDay()]}</small><b>${x.getDate()}</b></button>`; }).join("");
+  $("#tider").innerHTML = tider.length ? tider.map(t => `<button data-tid="${t}" class="${t === M.tid ? "on" : ""}">${hhmm(t)}</button>`).join("") : `<p class="none">Inga lediga tider. Välj en annan dag.</p>`;
+  $("#tidrubrik").textContent = M.datum ? `Tid · ${lang(M.datum)}` : "Tid";
+  const klar = M.adress && M.datum && M.tid != null && profil;
+  $("#skicka").disabled = !klar;
+  $("#skicka").textContent = klar ? `Skicka förfrågan · ${fmtMin(p.min + (M.restid ? M.restid.min * 2 : 0))}`
+    : !M.adress ? "Fyll i adressen" : M.tid == null ? "Välj dag och tid" : "Fyll i dina uppgifter (steg 5)";
+}
+function makProfilHtml() {
+  if (profil && !M.redigera) return `<div class="me"><div><b>${esc(profil.namn)}</b><br><small>${esc(profil.firma)} · ${esc(profil.telefon)}</small></div><button data-act="redigera">Ändra</button></div>`;
+  const p = profil || {};
+  return `<form id="profilform" class="grid2">
+    <input name="namn" placeholder="Ditt namn" value="${esc(p.namn)}" autocomplete="name" required>
+    <input name="firma" placeholder="Mäklarfirma" value="${esc(p.firma)}" autocomplete="organization">
+    <input name="epost" type="email" placeholder="E-post" value="${esc(p.epost)}" autocomplete="email" required>
+    <input name="telefon" type="tel" placeholder="Mobil" value="${esc(p.telefon)}" autocomplete="tel" required>
+    <button class="btn sec" type="submit">Spara mina uppgifter</button>
+    <p class="hint" style="margin:0">Sparas i appen, så du slipper fylla i dem nästa gång.</p></form>`;
+}
+function makBoka() {
+  $("#main").innerHTML = `
+    ${M.installera ? `<div class="install">${logga}<div><b>Lägg Bildfab på hemskärmen</b><br>Boka på 20 sekunder och få svar som notis.</div><button data-act="installera">Lägg till</button></div>` : ""}
+    <div class="sec"><h3>1 · Paket</h3><div class="pk">${PAKET.map(p => `<button data-paket="${p.id}" class="${p.id === M.paket ? "on" : ""}"><div><b>${p.namn}</b><small>${p.info}</small></div><span>${fmtMin(p.min)}</span></button>`).join("")}</div></div>
+    <div class="sec"><h3>2 · Adress</h3><input id="adress" placeholder="Gata och nummer, ort" value="${esc(M.adress)}" autocomplete="street-address">
+      <p class="hint" id="restid">${M.restid ? `🚗 ${esc(restidText(M.restid))}` : "Restiden räknas ut från Bildfabs kontor."}</p><div class="tot" id="tot"></div></div>
+    <div class="sec"><h3>3 · Dag</h3><div class="chips" id="dagar"></div></div>
+    <div class="sec"><h3 id="tidrubrik">4 · Tid</h3><div class="slots" id="tider"></div>
+      <p class="hint">Bara tider där fotografen hinner köra dit och hem visas.</p></div>
+    <div class="sec"><h3>5 · Du</h3><div id="profil">${makProfilHtml()}</div></div>
+    <div class="cta"><button class="btn" id="skicka" data-act="skicka"></button><p class="err" id="err"></p></div>`;
+  makDelar();
+  kopplaRestid($("#adress"), $("#restid"), r => { M.restid = r; makDelar(); });
+  $("#adress").addEventListener("input", e => { M.adress = e.target.value.trim(); if (!M.adress) M.restid = null; makDelar(); });
+}
+const STATUSTEXT = { pending: "Väntar på svar", accepted: "Bekräftad", rejected: "Avböjd", cancelled: "Avbokad" };
+function makMina() {
+  const mina = profil ? S.bokningar.filter(b => b.epost === profil.epost).sort((a, b) => b.skapad - a.skapad) : [];
+  $("#main").innerHTML = mina.length ? mina.map(b => `<div class="card">
+    <span class="badge ${b.status}">${STATUSTEXT[b.status]}</span>
+    <h2>${esc(paket(b.paket).namn)}</h2>
+    <p><b>${esc(kort(b.datum))} · ${hhmm(b.start)}–${hhmm(b.start + b.min)}</b></p>
+    <p>📍 ${esc(b.adress)}</p>
+    ${b.orsak ? `<p>💬 ${esc(b.orsak)}</p>` : ""}
+    ${b.status === "pending" ? `<p class="hint" style="margin:6px 0 0">Tiden är reserverad åt dig tills fotografen svarar.</p>` : ""}
+    ${["pending", "accepted"].includes(b.status) ? `<div class="yn" style="grid-template-columns:1fr"><button class="nej" data-avboka="${b.id}">Avboka</button></div>` : ""}
+  </div>`).join("") : `<p class="none">Inga bokningar än. Boka under fliken Boka.</p>`;
+}
+function maklare() { makTop(); makTabs(); M.flik === "boka" ? makBoka() : makMina(); }
+
+// ---------- FOTOGRAF ----------
+const F = { flik: "forfragningar", avbojer: null };
+function fotTop() { $("#top").innerHTML = `${logga}<h1>Bildfab · Foto<small>${new Date().toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "long" })}</small></h1>`; }
+function fotTabs() {
+  const n = S.bokningar.filter(b => b.status === "pending").length;
+  const t = (id, ikon, txt, extra = "") => `<button data-flik="${id}" class="${F.flik === id ? "on" : ""}"><i>${ikon}</i>${txt}${extra}</button>`;
+  $("#tabs").innerHTML = t("forfragningar", "🔔", "Förfrågningar", n ? `<span class="n">${n}</span>` : "") + t("kalender", "📅", "Jobb") + t("tider", "⏱", "Mina tider");
+}
+const totHtml = b => `<div class="tot"><div><span>Jobb</span><b>${fmtMin(b.min)}</b></div><div><span>Restid t/r</span><b>${b.restid ? fmtMin(b.restid.min * 2) : "–"}</b></div><div class="sum"><span>Total</span><b>${fmtMin(b.min + (b.restid ? b.restid.min * 2 : 0))}</b></div></div>`;
+const kartlank = a => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(KONTOR.namn)}&destination=${encodeURIComponent(a)}`;
+function fotForfragningar() {
+  const lista = S.bokningar.filter(b => b.status === "pending").sort((a, b) => a.skapad - b.skapad);
+  $("#main").innerHTML = lista.length ? lista.map(b => `<div class="card" id="k-${b.id}">
+    <span class="badge pending">Ny förfrågan</span>
+    <h2>${esc(paket(b.paket).namn)}</h2>
+    <p><b>${esc(lang(b.datum))} · ${hhmm(b.start)}–${hhmm(b.start + b.min)}</b></p>
+    <p>📍 <a href="${kartlank(b.adress)}" target="_blank" rel="noopener">${esc(b.adress)}</a></p>
+    <p>👤 ${esc(b.namn)}, ${esc(b.firma)} · <a href="tel:${esc(b.telefon)}">${esc(b.telefon)}</a></p>
+    ${totHtml(b)}
+    ${F.avbojer === b.id ? `<div class="reasons">${["Fullt den dagen", "För långt bort", "Går det dagen efter?", "Ring mig"].map(r => `<button data-nejorsak="${b.id}" data-orsak="${r}">${r}</button>`).join("")}</div>`
+      : `<div class="yn"><button class="nej" data-nej="${b.id}">Nej</button><button class="ja" data-ja="${b.id}">Ja</button></div>`}
+  </div>`).join("") : `<p class="none">Inga obesvarade förfrågningar. 👍</p>`;
+}
+function fotKalender() {
+  const idag = iso(new Date());
+  const jobb = S.bokningar.filter(b => b.status === "accepted" && b.datum >= idag).sort((a, b) => (a.datum + pad(a.start)).localeCompare(b.datum + pad(b.start)));
+  const perDag = {}; jobb.forEach(b => (perDag[b.datum] ||= []).push(b));
+  $("#main").innerHTML = Object.keys(perDag).length ? Object.entries(perDag).map(([d, lista]) => {
+    const total = lista.reduce((s, b) => s + b.min + resa(b) * 2, 0);
+    return `<div class="day"><div><h3>${esc(lang(d))}</h3><span class="dt">${fmtMin(total)} inkl. resor</span></div>
+      ${lista.map(b => `<div class="job"><span class="t">${hhmm(b.start)}</span><div><b>${esc(paket(b.paket).namn)}</b> · ${esc(b.firma)}
+        <p>📍 <a href="${kartlank(b.adress)}" target="_blank" rel="noopener">${esc(b.adress)}</a>${b.restid ? ` · 🚗 ${b.restid.min} min` : ""}</p>
+        <p>👤 ${esc(b.namn)} · <a href="tel:${esc(b.telefon)}">${esc(b.telefon)}</a></p></div></div>`).join("")}</div>`;
+  }).join("") : `<p class="none">Inga bekräftade jobb framåt.</p>`;
+}
+function fotTider() {
+  $("#main").innerHTML = `<div class="sched">${[1, 2, 3, 4, 5, 6, 0].map(d => { const s = S.schema[d]; return `<div class="d">
+    <div><b>${VD[d]}dag</b><br>${s.pa ? `<input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till">` : `<small class="none">Ledig</small>`}</div>
+    <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VD[d]}dag"><span></span></label></div>`; }).join("")}</div>
+    <p class="hint">Ändringar syns direkt i mäklarens app. Restiden till varje jobb räknas in automatiskt.</p>`;
+}
+function fotograf() { fotTop(); fotTabs(); ({ forfragningar: fotForfragningar, kalender: fotKalender, tider: fotTider })[F.flik](); }
+
+// Fyll i restid för demodata som saknar den (görs en gång, i fotografens telefon).
+async function fyllRestid() {
+  for (const b of S.bokningar.filter(b => !b.restid)) {
+    try { const r = await restid(b.adress); S = ladda(); const x = S.bokningar.find(y => y.id === b.id); if (x) { x.restid = r; spara(); render(); } } catch {}
+    await new Promise(r => setTimeout(r, 1100)); // Nominatim: max 1 anrop/s
+  }
+}
+
+// ---------- händelser ----------
+const render = () => ROLL === "fotograf" ? fotograf() : maklare();
+const hitta = id => S.bokningar.find(b => b.id === id);
+
+document.addEventListener("click", e => {
+  const el = e.target.closest("button"); if (!el) return;
+  const d = el.dataset;
+  if (d.flik) { if (ROLL === "fotograf") F.flik = d.flik; else M.flik = d.flik; render(); return; }
+  if (d.paket) { M.paket = d.paket; document.querySelectorAll("[data-paket]").forEach(b => b.classList.toggle("on", b === el)); makDelar(); return; }
+  if (d.dag) { M.datum = d.dag; M.tid = null; makDelar(); return; }
+  if (d.tid) { M.tid = Number(d.tid); makDelar(); return; }
+  if (d.act === "installera") { M.installera = false; render(); return; }
+  if (d.act === "redigera") { M.redigera = true; $("#profil").innerHTML = makProfilHtml(); return; }
+  if (d.act === "skicka") {
+    S = ladda();
+    const r = M.restid?.min ?? STANDARD_RESA, p = paket(M.paket);
+    if (!lediga(p.min, M.datum, r).includes(M.tid)) { $("#err").textContent = "Tiden hann bli upptagen, välj en annan."; makDelar(); return; }
+    const b = { id: "b" + Date.now(), paket: p.id, datum: M.datum, start: M.tid, min: p.min, status: "pending", adress: M.adress, restid: M.restid, skapad: Date.now(), ...profil };
+    S.bokningar.push(b); spara();
+    M.tid = null; M.flik = "mina"; render();
+    push("Förfrågan skickad", `${p.namn}, ${kort(b.datum)} ${hhmm(b.start)}. Tiden är reserverad tills fotografen svarar.`);
+    return;
+  }
+  if (d.avboka) { S = ladda(); const b = hitta(d.avboka); if (b) { b.status = "cancelled"; b.orsak = "Avbokad av dig"; spara(); render(); } return; }
+  if (d.ja) { S = ladda(); const b = hitta(d.ja); if (b) { b.status = "accepted"; spara(); render(); } return; }
+  if (d.nej) { F.avbojer = d.nej; render(); return; }
+  if (d.nejorsak) { S = ladda(); const b = hitta(d.nejorsak); if (b) { b.status = "rejected"; b.orsak = d.orsak; spara(); } F.avbojer = null; render(); return; }
+});
+
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  if (e.target.id !== "profilform") return;
+  const v = Object.fromEntries([...new FormData(e.target)].map(([k, x]) => [k, String(x).trim()]));
+  if (!v.namn || !v.telefon || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.epost)) { $("#err").textContent = "Fyll i namn, giltig e-post och mobil."; return; }
+  profil = v; sparaProfil(); M.redigera = false; $("#err").textContent = "";
+  $("#profil").innerHTML = makProfilHtml(); makDelar(); makTabs();
+});
+
+document.addEventListener("change", e => {
+  const el = e.target; if (!el.dataset.sched) return;
+  S = ladda();
+  const dag = S.schema[el.dataset.sched];
+  if (el.dataset.k === "pa") dag.pa = el.checked; else if (el.value) dag[el.dataset.k] = el.value;
+  if (minuter(dag.till) <= minuter(dag.fran)) dag.till = hhmm(minuter(dag.fran) + 60);
+  spara(); render();
+});
+
+// Den andra telefonen ändrade datan: uppdatera och pling vid nyheter.
+addEventListener("storage", e => {
+  if (e.key !== KEY) return;
+  const fore = S;
+  S = ladda();
+  if (!e.newValue) { render(); return; } // återställd
+  const gammal = id => fore.bokningar.find(b => b.id === id);
+  if (ROLL === "fotograf") {
+    S.bokningar.filter(b => b.status === "pending" && !gammal(b.id)).forEach(b =>
+      push("Ny förfrågan", `${paket(b.paket).namn}, ${kort(b.datum)} ${hhmm(b.start)} · ${b.adress}${b.restid ? ` · 🚗 ${b.restid.min} min` : ""}`,
+        () => { F.flik = "forfragningar"; render(); $("#k-" + b.id)?.scrollIntoView({ behavior: "smooth" }); }));
+    S.bokningar.filter(b => b.status === "cancelled" && gammal(b.id) && gammal(b.id).status !== "cancelled").forEach(b =>
+      push("Avbokad", `${b.namn} avbokade ${paket(b.paket).namn}, ${kort(b.datum)} ${hhmm(b.start)}.`));
+  } else if (profil) {
+    S.bokningar.filter(b => b.epost === profil.epost && gammal(b.id) && gammal(b.id).status !== b.status).forEach(b => {
+      if (b.status === "accepted") push("✓ Bekräftad", `${paket(b.paket).namn}, ${kort(b.datum)} ${hhmm(b.start)}. Vi ses där!`, () => { M.flik = "mina"; render(); });
+      if (b.status === "rejected") push("Kunde inte bekräftas", `${kort(b.datum)} ${hhmm(b.start)}: ${b.orsak || "välj en annan tid"}.`, () => { M.flik = "mina"; render(); });
+    });
+  }
+  // Mäklaren mitt i en bokning: rita bara om delarna, så att adressfältet inte tappar fokus.
+  if (ROLL === "maklare" && M.flik === "boka") { makDelar(); makTabs(); } else render();
+});
+
+render();
+if (ROLL === "fotograf") fyllRestid();
+</script>
+</body>
+</html>

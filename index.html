@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bokning för Bildfab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --ink: #000; --text: #4b4b4b; --muted: #808291; --line: #e3e5e8; --soft: #f4f6f7; --ok: #1f7a4d; --no: #cf2e2e; --mid: #b4531a;
+  --mono: "Roboto Mono", ui-monospace, monospace; --sans: "Roboto", system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #fff; color: var(--text); font: 16px/1.6 var(--sans); }
+h1, h2, h3 { font-family: var(--mono); color: var(--ink); line-height: 1.2; margin: 0 0 .5em; }
+h1 { font-size: clamp(28px, 4vw, 40px); }
+h2 { font-size: 22px; margin-top: 56px; }
+h3 { font-size: 16px; }
+header { display: flex; align-items: center; gap: 16px; padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--line); }
+header img { height: 52px; }
+main { max-width: 1100px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 48px) 80px; }
+.lead { font-size: 18px; max-width: 720px; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+.card { border: 1px solid var(--line); padding: 22px; display: flex; flex-direction: column; }
+.card.rek { outline: 3px solid var(--ink); outline-offset: -3px; }
+.card .tag { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.card.rek .tag { color: var(--ink); }
+.card p { flex: 1; font-size: 15px; }
+.btn { font-family: var(--mono); font-size: 14px; padding: 12px 18px; border: 1px solid var(--ink); background: var(--ink); color: #fff; text-decoration: none; display: inline-block; text-align: center; }
+.btn.ghost { background: #fff; color: var(--ink); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 16px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink); background: var(--soft); }
+td:first-child { color: var(--ink); font-weight: 500; }
+.y { color: var(--ok); font-weight: 500; } .n { color: var(--no); font-weight: 500; } .m { color: var(--mid); font-weight: 500; }
+.scroll { overflow-x: auto; }
+.arch { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px; }
+.arch div { background: var(--soft); padding: 18px 20px; }
+.arch b { font-family: var(--mono); color: var(--ink); display: block; margin-bottom: 4px; }
+.arch p { margin: 0; font-size: 15px; }
+pre.flow { background: #111; color: #eee; padding: 20px; font: 13px/1.6 var(--mono); overflow-x: auto; }
+ol li, ul li { margin-bottom: 6px; }
+.note { font-size: 13px; color: var(--muted); }
+@media (max-width: 860px) { .cards, .arch { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header><img src="mvp/assets/Bildfabriken-logo.png" alt="Bildfabriken"><span style="font-family:var(--mono)">Bokning: tre vägar</span></header>
+<main>
+  <h1>Bokningssystem för Bildfab</h1>
+  <p class="lead">Önskemålet: mäklaren ser lediga tider, klickar i en som blir <b>preliminärt upptagen</b>, fotografen får en <b>pling i mejl och mobil</b> och svarar <b>ja eller nej</b>. Kunden kan avboka, fotografen styr sina tider, och <b>restiden</b> från kontoret räknas ut.</p>
+
+  <div class="cards">
+    <div class="card">
+      <span class="tag">Gratis · enklast</span>
+      <h3>Google Kalender</h3>
+      <p>Inbyggd bokningssida. Kunden bokar direkt, utan preliminär bokning och utan ja/nej. Gratis med en bokningssida, fler kräver Workspace.</p>
+      <a class="btn ghost" href="google/index.html">Öppna Google-demon →</a>
+    </div>
+    <div class="card rek">
+      <span class="tag">Rekommenderas att börja med</span>
+      <h3>Cal.com</h3>
+      <p>"Kräver bekräftelse": tiden hålls preliminärt, fotografen får mejl och godkänner eller avböjer i Cal. Gratis för en fotograf, men prissidan anger inte vilken plan "Kräver bekräftelse" hör till: testa i ett gratiskonto först.</p>
+      <a class="btn" href="cal/index.html">Öppna Cal.com-demon →</a>
+    </div>
+    <div class="card">
+      <span class="tag">Mest skräddarsytt</span>
+      <h3>Bygga själv</h3>
+      <p>Allt ovan plus restid som styr vilka tider som visas, mäklarfirmor som fasta kunder och Bildfabs egen design. Kostar utvecklingstid och någon måste äga driften.</p>
+      <a class="btn" href="mobil/index.html">Mobilappen: boka och få pling →</a>
+      <a href="mvp/index.html" style="margin-top:10px;font-size:14px;color:var(--ink)">Första skissen (förfrågan med önskade datum)</a>
+    </div>
+  </div>
+
+  <h2>Önskemålen, punkt för punkt</h2>
+  <div class="scroll"><table>
+    <tr><th>Önskemål</th><th>Google</th><th>Cal.com</th><th>Bygga själv</th></tr>
+    <tr><td>Kunden ser lediga tider och väljer</td><td class="y">Ja</td><td class="y">Ja</td><td class="y">Ja</td></tr>
+    <tr><td>Vald tid blir preliminärt upptagen</td><td class="n">Nej, bokas direkt</td><td class="y">Ja</td><td class="y">Ja</td></tr>
+    <tr><td>Pling i mejl till fotografen</td><td class="y">Ja</td><td class="y">Ja</td><td class="y">Ja</td></tr>
+    <tr><td>Pling i mobilen</td><td class="m">Mejlnotis. Notis från kalenderappen är inte belagd</td><td class="m">Mobilappen ingår i Free. SMS kräver meddelandekrediter: inga i Free, 750 per användare i Teams</td><td class="y">Push (PWA) eller SMS</td></tr>
+    <tr><td>Ja / Nej direkt från pling</td><td class="n">Nej, fotografen får avboka i efterhand</td><td class="m">Ja, under Obekräftade i Cal (webb eller app). Knappar direkt i mejlet är inte belagt, testa</td><td class="y">Ja, direkt i notisen</td></tr>
+    <tr><td>Kunden kan avboka</td><td class="y">Ja, länk i bekräftelsemejlet</td><td class="y">Ja, länk i bekräftelsen, även omboka</td><td class="y">Ja</td></tr>
+    <tr><td>Fotografen styr tillgängliga tider</td><td class="y">Ja, veckoschema</td><td class="y">Ja, veckoschema och datumundantag</td><td class="y">Ja</td></tr>
+    <tr><td>Olika längd för lägenhet och villa</td><td class="m">Kräver Workspace</td><td class="y">Ja, gratis</td><td class="y">Ja</td></tr>
+    <tr><td>Två fotografer, fördelning</td><td class="m">En kalender per fotograf</td><td class="m">Round robin kräver Teams (cirka 12–15 USD per användare och månad)</td><td class="y">Ja</td></tr>
+    <tr><td>Restid visas för fotografen</td><td class="n">Nej</td><td class="m">Med en liten egen tjänst via webhook</td><td class="y">Ja</td></tr>
+    <tr><td>Restid styr vilka tider som är lediga</td><td class="n">Nej, fast buffert</td><td class="n">Nej, fast buffert</td><td class="y">Ja. Demon räknar via kontoret, skarpt mellan föregående och nästa jobb</td></tr>
+    <tr><td>Kostnad</td><td>0 kr (en bokningssida). Fullt: Workspace Business Standard ca 151 kr/användare/mån, som Bildfab kanske redan har</td><td>0 kr per fotograf. Gemensam sida med fördelning: Teams ca 119 kr/användare/mån</td><td>Drift 0–50 kr/mån + ev. SMS 0,52 kr per SMS-del. Bygget: Claude Pro ca 199 kr/mån + din tid</td></tr>
+  </table></div>
+
+  <h2>Kostnader i detalj</h2>
+  <p>Kurs 2026-10-27 (ECB): 1 USD = 9,94 kr, 1 EUR = 11,08 kr. Priser exklusive moms om inget annat sägs.</p>
+  <div class="scroll"><table>
+    <tr><th>Alternativ</th><th>Pris</th><th>Vad man får för bokning</th></tr>
+    <tr><td>Google, privat Gmail</td><td>0 kr</td><td>En bokningssida, en längd. Inga mejlpåminnelser.</td></tr>
+    <tr><td>Google Workspace Business Starter</td><td>6,80 €, ca 75 kr/användare/mån</td><td>Googles prissida säger att bokningssidor inte ingår, hjälpsidan säger en sida. Motsägelsefullt, men fler sidor och påminnelser ingår i alla fall inte.</td></tr>
+    <tr><td>Google Workspace Business Standard</td><td>13,60 €, ca 151 kr/användare/mån</td><td>Flera bokningssidor (lägenhet, villa), mejlpåminnelser, kontroll mot flera kalendrar, betalning, e-postverifiering, medvärdar.</td></tr>
+    <tr><td>Google AI Pro (Gemini, privat konto)</td><td>255 kr/mån inkl. moms</td><td>Samma premiumfunktioner för bokning som Workspace, enligt Googles jämförelse. Men på ett privat konto, inte på info@bildfab.se. Google AI Plus (99 kr) finns inte med i listan.</td></tr>
+    <tr><td>Cal.com Free</td><td>0 kr</td><td>En användare. Obegränsat antal bokningstyper, mejlnotiser, mobilapp. SMS kräver köpta krediter. Vilken plan "Kräver bekräftelse" hör till anges inte: testa.</td></tr>
+    <tr><td>Cal.com Teams</td><td>12 USD, ca 119 kr/användare/mån vid årsbetalning (månadspris visas inte). Två fotografer ca 238 kr/mån</td><td>Gemensam bokningssida som fördelar jobben mellan fotograferna (round robin), egna notismallar, ingen Cal-logga.</td></tr>
+    <tr><td>Bygga själv: drift</td><td>0 kr (Cloudflare gratisnivå). 5 USD/mån om den nås, vilket inte händer här</td><td>Allt i tabellen ovan, inklusive restid som styr tiderna.</td></tr>
+    <tr><td>Bygga själv: SMS (46elks)</td><td>0,52 kr per SMS-del, ingen månadsavgift</td><td>Med å, ä, ö, adress och länkar blir varje SMS 2–3 delar. 100 bokningar/mån med 3 SMS var: ca 310–470 kr/mån. Push-notiser i en PWA kostar 0 kr.</td></tr>
+    <tr><td>Bygga själv: Claude Pro</td><td>20 USD, ca 199 kr/mån (17 USD med årsavtal)</td><td>Claude Code ingår. Räcker för bygget. Max (från 100 USD) behövs inte.</td></tr>
+  </table></div>
+  <p class="note">Källor: workspace.google.com/intl/sv/pricing, one.google.com, Googles hjälpartikel "Compare premium features for appointment schedules", cal.com/pricing, 46elks.se/pricing, claude.com/pricing. Hämtade 2026-10-28.</p>
+
+  <h2>Restid</h2>
+  <p>Demorna räknar restid med bil från kontoret (Brogatan 5) när man skriver in adressen: OpenStreetMap gör om adressen till en koordinat och OSRM räknar bilvägen. Det är gratis men bara för demo. Skarpt läggs anropet i en egen backend som cachar varje adress, och som använder en tjänst med avtal (OpenRouteService med gratisnivå, eller Googles Routes API).</p>
+  <p>Det verkliga värdet kommer när restiden <b>styr kalendern</b>: om fotografen är i Holmsund klockan 9 ska ett jobb i Vännäs inte kunna bokas klockan 11. Det kan varken Google eller Cal.com göra, där är bufferten fast. Färdiga plattformar för fastighetsfoto (Aryeo, HDPhotoHub, Tonomo) räknar körtid mellan jobb, men de är amerikanska: engelska, priser i USD och data i USA. Värda en titt innan något byggs.</p>
+
+  <h2>Bygga själv på Cloudflare</h2>
+  <p>Ja, Cloudflare passar bra. Belastningen är liten (några bokningar om dagen), så gratisnivån räcker med stor marginal.</p>
+  <pre class="flow">Mäklaren                         Cloudflare                                Fotografen
+─────────                        ──────────                                ──────────
+boka.bildfab.se  ──GET /tider──▶  Worker räknar lediga tider:
+                                  schema + bokningar + Google-kalendern
+                                  + restid till/från närmaste jobb
+väljer tid       ──POST /boka──▶  D1: bokning med status "prel"
+                                  (Turnstile stoppar spam)
+                                                         ──SMS + mejl──▶  "Ny förfrågan: Villa tor 9:00
+                                                                           Björkvägen 4, 14 min. JA / NEJ"
+                                  ◀──── klick på signerad länk ─────────  JA
+                                  status "bekräftad", händelse skapas
+                                  i fotografens Google-kalender
+får bekräftelse  ◀──mejl──────    Cron: obesvarad prel släpps efter 24 h
+med avbokningslänk</pre>
+
+  <div class="arch">
+    <div><b>Workers</b><p>API:t: lediga tider, boka, ja/nej, avboka. Serverar också bokningssidan i Bildfabs design. Kan bäddas in på bildfab.se eller ligga på boka.bildfab.se.</p></div>
+    <div><b>D1 (SQLite)</b><p>Bokningar, tillgänglighet, datumundantag, mäklarfirmor och cachade restider. Kontrollen och insättningen görs i samma transaktion, så två mäklare kan inte få samma prel-tid.</p></div>
+    <div><b>Cron Triggers</b><p>Släpper preliminära bokningar som inte besvarats inom 24 timmar och skickar påminnelser dagen före.</p></div>
+    <div><b>Mejl + SMS</b><p>Mejl via Cloudflare Email Service eller Resend. SMS via svenska 46elks, med signerade JA/NEJ-länkar som fungerar utan inloggning.</p></div>
+    <div><b>Google Calendar API</b><p>Läser fotografernas upptagna tider (så att privata tider blockerar) och skriver in bekräftade jobb. Ett OAuth-medgivande per fotograf, en gång.</p></div>
+    <div><b>Cloudflare Access</b><p>Låser fotografvyn (tillgänglighet, bokningar) bakom inloggning med e-postkod. Gratis för ett litet team.</p></div>
+  </div>
+
+  <h3 style="margin-top:28px">Att tänka på</h3>
+  <ul>
+    <li><b>Eget Cloudflare-konto för Bildfab</b>, inte ett delat. Då hamnar driften och fakturan hos rätt ägare.</li>
+    <li><b>Någon måste äga det:</b> uppdateringar, fel en lördag, GDPR (personuppgiftsbiträdesavtal med SMS- och mejltjänsten, rensning av gamla bokningar).</li>
+    <li><b>Ordning:</b> 1) bokning med prel och ja/nej via mejl, 2) SMS, 3) synk med Google-kalendern, 4) restid som styr tider, 5) konton för mäklarfirmor.</li>
+    <li><b>Ett mellanläge:</b> kör Cal.com nu och lägg en liten Worker bredvid som tar emot Cal-webhooks, räknar restid och skickar SMS. Byt till eget bygge först om fasta bufferten visar sig vara ett problem.</li>
+  </ul>
+  <p class="note">Demosidorna sparar allt i den här webbläsaren (localStorage). Inget skickas någonstans, förutom adressen till OpenStreetMap och OSRM för att räkna restid.</p>
+</main>
+</body>
+</html>
