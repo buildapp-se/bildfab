@@ -17,7 +17,7 @@ html, body { height: 100%; }
 body { margin: 0; background: #fff; color: var(--text); font: 15px/1.45 var(--sans); display: flex; flex-direction: column; }
 h1, h2, h3 { font-family: var(--mono); color: var(--ink); margin: 0; line-height: 1.2; }
 button, input { font: inherit; color: var(--ink); }
-input { width: 100%; padding: 12px; border: 1px solid #cfd2d7; border-radius: 10px; background: #fff; font-size: 16px; }
+input { width: 100%; min-width: 0; padding: 12px; border: 1px solid #cfd2d7; border-radius: 10px; background: #fff; font-size: 16px; }
 input:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
 
 .top { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
@@ -109,6 +109,14 @@ main { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
 .push .app { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .push b { display: block; color: var(--ink); font-size: 14px; }
 .push p { margin: 0; font-size: 13px; }
+/* dator: samma app som en centrerad kolumn */
+@media (min-width: 700px) {
+  .install { display: none; }
+  html { background: #f4f6f7; }
+  body { max-width: 560px; margin: 0 auto; box-shadow: 0 0 0 1px var(--line); }
+  .cta { left: 50%; right: auto; width: 560px; translate: -50%; }
+  .push { left: auto; right: 16px; width: 380px; }
+}
 </style>
 </head>
 <body>
@@ -169,7 +177,7 @@ let S = ladda();
 // ponytail: räknar resa via kontoret, inte direkt mellan två jobb. Uppgradering: OSRM mellan föregående och nästa adress.
 function lediga(minLangd, datum, resaMin) {
   const d = fromIso(datum), dag = S.schema[d.getDay()];
-  if (!dag.pa) return [];
+  if (!dag.pa || (S.ledigt || []).some(p => datum >= p.fran && datum <= p.till)) return [];
   const grans = Date.now() + 24 * 36e5, ut = [];
   const upptagna = S.bokningar.filter(b => b.datum === datum && (b.status === "pending" || b.status === "accepted"));
   // första start: när fotografen hunnit fram, avrundat uppåt till halvtimme
@@ -303,6 +311,17 @@ function fotTider() {
   $("#main").innerHTML = `<div class="sched">${[1, 2, 3, 4, 5, 6, 0].map(d => { const s = S.schema[d]; return `<div class="d">
     <div><b>${VD[d]}dag</b><br>${s.pa ? `<input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till">` : `<small class="none">Ledig</small>`}</div>
     <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VD[d]}dag"><span></span></label></div>`; }).join("")}</div>
+    <div class="sec" style="margin-top:24px"><h3>Lediga dagar</h3>
+      <form id="ledigform" class="grid2" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end">
+        <label><small>Från</small><input type="date" name="fran" min="${iso(new Date())}" required></label>
+        <label><small>Till (valfritt)</small><input type="date" name="till" min="${iso(new Date())}"></label>
+        <button class="btn" type="submit" style="grid-column:1/-1">Lägg till ledig dag</button>
+      </form>
+      ${(S.ledigt || []).map((p, i) => { const krock = S.bokningar.filter(b => ["pending", "accepted"].includes(b.status) && b.datum >= p.fran && b.datum <= p.till).length;
+        return `<div class="sched"><div class="d"><div><b>${esc(kort(p.fran))}${p.till !== p.fran ? ` – ${esc(kort(p.till))}` : ""}</b>
+          ${krock ? `<br><small style="color:var(--no)">Obs: ${krock} bokning${krock > 1 ? "ar" : ""} ligger redan här</small>` : ""}</div>
+          <button class="btn sec" style="width:auto;padding:8px 12px" data-ledigbort="${i}">Ta bort</button></div></div>`; }).join("")}
+    </div>
     <p class="hint">Ändringar syns direkt i mäklarens app. Restiden till varje jobb räknas in automatiskt.</p>`;
 }
 function fotograf() { fotTop(); fotTabs(); ({ forfragningar: fotForfragningar, kalender: fotKalender, tider: fotTider })[F.flik](); }
@@ -341,11 +360,17 @@ document.addEventListener("click", e => {
   if (d.avboka) { S = ladda(); const b = hitta(d.avboka); if (b) { b.status = "cancelled"; b.orsak = "Avbokad av dig"; spara(); render(); } return; }
   if (d.ja) { S = ladda(); const b = hitta(d.ja); if (b) { b.status = "accepted"; spara(); render(); } return; }
   if (d.nej) { F.avbojer = d.nej; render(); return; }
+  if (d.ledigbort) { S = ladda(); S.ledigt.splice(Number(d.ledigbort), 1); spara(); render(); return; }
   if (d.nejorsak) { S = ladda(); const b = hitta(d.nejorsak); if (b) { b.status = "rejected"; b.orsak = d.orsak; spara(); } F.avbojer = null; render(); return; }
 });
 
 document.addEventListener("submit", e => {
   e.preventDefault();
+  if (e.target.id === "ledigform") {
+    const { fran, till } = Object.fromEntries(new FormData(e.target));
+    S = ladda(); (S.ledigt ||= []).push({ fran, till: till && till > fran ? till : fran });
+    S.ledigt.sort((a, b) => a.fran.localeCompare(b.fran)); spara(); render(); return;
+  }
   if (e.target.id !== "profilform") return;
   const v = Object.fromEntries([...new FormData(e.target)].map(([k, x]) => [k, String(x).trim()]));
   if (!v.namn || !v.telefon || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.epost)) { $("#err").textContent = "Fyll i namn, giltig e-post och mobil."; return; }

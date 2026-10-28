@@ -147,6 +147,9 @@ aside .tot .sum { grid-column: 1 / -1; padding: 12px 0 0; border-left: 0; border
 .tag.ny { color: var(--warn); } .tag.bekraftad { color: var(--ok); } .tag.avbojd { color: var(--no); }
 .act select { padding: 9px 10px; }
 .act .links { display: flex; gap: 8px; flex-wrap: wrap; }
+.krock { color: #c62828; font-size: 13px; margin: 0; }
+.skiss { max-width: 1200px; margin: 0 auto; padding: 12px clamp(16px, 4vw, 48px); font-size: 14px; background: var(--soft); }
+.skiss a { color: var(--ink); }
 .empty { padding: 40px; text-align: center; background: var(--soft); font-family: var(--mono); }
 
 footer { background: var(--ink); color: #fff; padding: 32px clamp(16px, 4vw, 48px); font-family: var(--mono); font-size: 13px; }
@@ -154,14 +157,17 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
 
 @media (max-width: 900px) {
   .layout, .req { grid-template-columns: 1fr; }
-  aside.sum { position: static; }
+  aside.sum { position: static; order: -1; }
   .cards { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 560px) {
   .cards, .row { grid-template-columns: 1fr; }
   .steps li { font-size: 0; } .steps li::before { font-size: 13px; }
-  header img { height: 40px; }
-  nav a { padding: 6px 8px; }
+  header { gap: 8px; }
+  header img { height: 36px; }
+  nav { font-size: 12px; gap: 0; }
+  nav a { padding: 6px; }
+  .demo { display: none; }
 }
 </style>
 </head>
@@ -183,6 +189,7 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
     <h1>Boka fotografering</h1>
     <p>Mäklarfoto · Arkitektur · Interiör · Drönare · Umeå och Norrland</p>
   </div></div>
+  <p class="skiss">Alternativ skiss: förfrågan med önskade datum, för större uppdrag som arkitektur. För mäklare som vill välja en ledig tid direkt, se <a href="../mobil/index.html">bokningsappen</a> (fungerar både på webben och i mobilen).</p>
   <main>
     <div class="layout">
       <form id="form" novalidate>
@@ -233,8 +240,8 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
             <div class="row">
               <label class="f"><span>Typ av objekt</span>
                 <select name="objekttyp">
-                  <option>Kontor / verksamhet</option><option>Offentlig byggnad</option><option>Flerbostadshus</option>
-                  <option>Villa / radhus</option><option>Lägenhet</option><option>Annat</option>
+                  <option>Villa / radhus</option><option>Lägenhet</option><option>Flerbostadshus</option>
+                  <option>Kontor / verksamhet</option><option>Offentlig byggnad</option><option>Annat</option>
                 </select></label>
               <label class="f"><span>Ungefärlig yta (kvm)</span><input type="number" name="yta" min="0" step="10" placeholder="t.ex. 120"></label>
             </div>
@@ -643,8 +650,16 @@ $("#list").addEventListener("click", e => {
   const alla = laddaBokningar();
   const b = alla.find(x => x.ref === kort.dataset.ref);
   const a = knapp.dataset.a;
-  if (a === "bekrafta") Object.assign(b, { status: "bekraftad",
-    valtDatum: kort.querySelector('[data-f="datum"]').value, fotograf: kort.querySelector('[data-f="fotograf"]').value });
+  if (a === "bekrafta") {
+    const valtDatum = kort.querySelector('[data-f="datum"]').value, fotograf = kort.querySelector('[data-f="fotograf"]').value;
+    // ponytail: ett jobb per fotograf och dag, skissen har tidsfönster, inte klockslag
+    if (alla.some(x => x.status === "bekraftad" && x.valtDatum === valtDatum && x.fotograf === fotograf)) {
+      kort.querySelector(".krock")?.remove();
+      kort.querySelector(".act").insertAdjacentHTML("beforeend", `<p class="krock" role="alert">${esc(fotograf)} har redan ett jobb ${fmtDag(valtDatum)}, välj ett annat datum eller en annan fotograf.</p>`);
+      return;
+    }
+    Object.assign(b, { status: "bekraftad", valtDatum, fotograf });
+  }
   if (a === "avboj") b.status = "avbojd";
   if (a === "angra") { b.status = "ny"; delete b.valtDatum; delete b.fotograf; }
   if (a === "ics") return laddaNerIcs(b);

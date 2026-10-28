@@ -14,7 +14,7 @@
 body { margin: 0; background: var(--soft); color: var(--text); font: 15px/1.55 var(--sans); }
 header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px clamp(16px, 3vw, 40px); background: #fff; border-bottom: 1px solid var(--line); }
 header h1 { font: 700 18px var(--mono); color: var(--ink); margin: 0; }
-header nav { display: flex; gap: 8px; }
+header nav { display: flex; gap: 8px; flex-wrap: wrap; }
 header a, header button { font: 13px var(--mono); color: var(--ink); text-decoration: none; border: 1px solid var(--ink); background: #fff; padding: 7px 12px; cursor: pointer; }
 .stage { display: flex; gap: clamp(16px, 4vw, 56px); justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
 figure { margin: 0; text-align: center; }
@@ -35,8 +35,8 @@ iframe { display: block; border: 0; width: 375px; height: 768px; transform-origi
 </head>
 <body>
 <header>
-  <h1>Mobilappen (bygga själv, som PWA)</h1>
-  <nav><button type="button" id="reset">Återställ demo</button><a href="../index.html">← Alla alternativ</a></nav>
+  <h1>Bokningsappen: webb och mobil (bygga själv)</h1>
+  <nav><a href="app.html?roll=maklare" target="_blank">Öppna som webbsida (mäklare)</a><a href="app.html?roll=fotograf" target="_blank">Fotografens vy</a><button type="button" id="reset">Återställ demo</button><a href="../index.html">← Alla alternativ</a></nav>
 </header>
 
 <div class="stage">
@@ -55,7 +55,7 @@ iframe { display: block; border: 0; width: 375px; height: 768px; transform-origi
 <p class="steg"><b>Prova:</b> välj paket och skriv en adress i mäklarens telefon, till exempel "Holmsund, Umeå". Se restiden och den totala tiden, och att tiderna anpassas efter restiden. Välj dag och tid, fyll i dina uppgifter och skicka. Fotografens telefon plingar. Tryck på notisen och sedan Ja eller Nej, så plingar mäklarens telefon tillbaka.</p>
 
 <div class="info">
-  <div><b>Vad är en PWA?</b><p>En webbsida som kan läggas på hemskärmen och då beter sig som en app: egen ikon, helskärm, notiser. Ingen App Store, ingen avgift, samma kod som webben.</p></div>
+  <div><b>Webb eller app? Båda.</b><p>Det är en vanlig webbsida. Mäklaren vid datorn går till adressen och bokar direkt, inget att ladda ner. I mobilen kan samma sida läggas på hemskärmen (PWA) och beter sig då som en app: egen ikon, helskärm, notiser. Ingen App Store, ingen avgift.</p></div>
   <div><b>Notiser</b><p>Android: fungerar direkt i Chrome. iPhone: fungerar från iOS 16.4, men bara när appen är tillagd på hemskärmen. Därför uppmanar mäklarens app till det. SMS som reserv för den som inte lagt till appen.</p></div>
   <div><b>Det här är en demo</b><p>Telefonerna delar data i den här webbläsaren och notiserna är simulerade. Skarpt skickas de som Web Push från en Cloudflare Worker. <code>app.html</code> kan också öppnas direkt i en mobil.</p></div>
 </div>

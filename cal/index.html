@@ -167,14 +167,14 @@ label.f > span { display: block; margin-bottom: 5px; }
   .bk .acts { justify-content: flex-start; }
   .bk .reason { grid-column: 1; }
   .row { grid-template-columns: 1fr; }
-  #phone { transform: scale(.8); transform-origin: bottom right; right: 10px; bottom: 10px; }
+  #phone { position: static; margin: 24px auto; } /* mobil: under innehållet, täcker inte kvittot */
 }
 </style>
 </head>
 <body>
 
 <div class="demobar">
-  <span><b>CAL.COM-DEMO</b> · Flödet som Cal.com gör det, med Bildfabs inställningar. Återskapat för att kunna klicka runt utan konto.</span>
+  <span><b>CAL.COM-DEMO</b> · Flödet som Cal.com gör det, med Bildfabs inställningar. Återskapat efter Cal.coms hjälpsidor för att kunna klicka runt utan konto: stegen och funktionerna stämmer, utseendet är förenklat.</span>
   <nav>
     <a href="#/" id="d-kund">Kundvy</a>
     <a href="#/admin/obekraftade" id="d-foto">Fotografvy</a>
@@ -382,7 +382,7 @@ function vyBooker(t) {
     ${infoKolumn(t)}
     <div class="b-cal">
       <div class="head"><h2>${V.manad.toLocaleDateString("sv-SE", { month: "long", year: "numeric" })}</h2>
-        <div><button type="button" data-act="manad" data-d="-1" aria-label="Föregående månad">‹</button><button type="button" data-act="manad" data-d="1" aria-label="Nästa månad">›</button></div></div>
+        <div><button type="button" data-act="manad" data-d="-1" ${V.manad.getFullYear() * 12 + V.manad.getMonth() <= new Date().getFullYear() * 12 + new Date().getMonth() ? "disabled" : ""} aria-label="Föregående månad">‹</button><button type="button" data-act="manad" data-d="1" aria-label="Nästa månad">›</button></div></div>
       <div class="month">${celler}</div>
     </div>
     <div class="b-slots">

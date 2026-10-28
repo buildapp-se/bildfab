@@ -22,9 +22,7 @@ main { max-width: 1100px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 48px) 8
 .lead { font-size: 18px; max-width: 720px; }
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
 .card { border: 1px solid var(--line); padding: 22px; display: flex; flex-direction: column; }
-.card.rek { outline: 3px solid var(--ink); outline-offset: -3px; }
 .card .tag { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.card.rek .tag { color: var(--ink); }
 .card p { flex: 1; font-size: 15px; }
 .btn { font-family: var(--mono); font-size: 14px; padding: 12px 18px; border: 1px solid var(--ink); background: var(--ink); color: #fff; text-decoration: none; display: inline-block; text-align: center; }
 .btn.ghost { background: #fff; color: var(--ink); }
@@ -41,6 +39,8 @@ td:first-child { color: var(--ink); font-weight: 500; }
 pre.flow { background: #111; color: #eee; padding: 20px; font: 13px/1.6 var(--mono); overflow-x: auto; }
 ol li, ul li { margin-bottom: 6px; }
 .note { font-size: 13px; color: var(--muted); }
+.beslut { border-left: 4px solid var(--ink); background: #fff; padding: 16px 20px; margin: 24px 0; }
+.beslut p { margin: 8px 0 0; }
 @media (max-width: 860px) { .cards, .arch { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -50,15 +50,22 @@ ol li, ul li { margin-bottom: 6px; }
   <h1>Bokningssystem för Bildfab</h1>
   <p class="lead">Önskemålet: mäklaren ser lediga tider, klickar i en som blir <b>preliminärt upptagen</b>, fotografen får en <b>pling i mejl och mobil</b> och svarar <b>ja eller nej</b>. Kunden kan avboka, fotografen styr sina tider, och <b>restiden</b> från kontoret räknas ut.</p>
 
+  <div class="beslut">
+    <b>En fråga avgör: måste fotografen godkänna varje bokning?</b>
+    <p><b>Nej, bokningen får gå igenom direkt:</b> börja med Google Kalender. Bildfab har redan Google Workspace, så det blir inget nytt konto och bokningarna hamnar i den kalender de redan använder. Fotografen styr sina tider och kan ta bort en bokning som inte passar. Olika längd för lägenhet och villa kräver Business Standard eller högre.</p>
+    <p><b>Ja, tiden ska vara preliminär tills fotografen sagt ja:</b> Cal.com. Det kan Google inte alls.</p>
+    <p><b>Restiden ska styra vilka tider som visas:</b> bygga själv. Det klarar ingen av de två.</p>
+  </div>
+
   <div class="cards">
     <div class="card">
-      <span class="tag">Gratis · enklast</span>
+      <span class="tag">Om bokningen får gå direkt</span>
       <h3>Google Kalender</h3>
       <p>Inbyggd bokningssida. Kunden bokar direkt, utan preliminär bokning och utan ja/nej. Gratis med en bokningssida, fler kräver Workspace.</p>
       <a class="btn ghost" href="google/index.html">Öppna Google-demon →</a>
     </div>
-    <div class="card rek">
-      <span class="tag">Rekommenderas att börja med</span>
+    <div class="card">
+      <span class="tag">Om fotografen ska säga ja/nej</span>
       <h3>Cal.com</h3>
       <p>"Kräver bekräftelse": tiden hålls preliminärt, fotografen får mejl och godkänner eller avböjer i Cal. Gratis för en fotograf, men prissidan anger inte vilken plan "Kräver bekräftelse" hör till: testa i ett gratiskonto först.</p>
       <a class="btn" href="cal/index.html">Öppna Cal.com-demon →</a>
@@ -67,8 +74,8 @@ ol li, ul li { margin-bottom: 6px; }
       <span class="tag">Mest skräddarsytt</span>
       <h3>Bygga själv</h3>
       <p>Allt ovan plus restid som styr vilka tider som visas, mäklarfirmor som fasta kunder och Bildfabs egen design. Kostar utvecklingstid och någon måste äga driften.</p>
-      <a class="btn" href="mobil/index.html">Mobilappen: boka och få pling →</a>
-      <a href="mvp/index.html" style="margin-top:10px;font-size:14px;color:var(--ink)">Första skissen (förfrågan med önskade datum)</a>
+      <a class="btn" href="mobil/index.html">Bokningsappen, webb och mobil →</a>
+      <a href="mvp/index.html" style="margin-top:10px;font-size:14px;color:var(--ink)">Alternativ skiss: förfrågan med önskade datum (för arkitektuppdrag)</a>
     </div>
   </div>
 

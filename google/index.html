@@ -129,21 +129,21 @@ label.f > span { display: block; font-size: 12px; color: var(--muted); margin-bo
 .toast { position: fixed; left: 24px; bottom: 24px; background: #323232; color: #fff; padding: 12px 18px; border-radius: 4px; z-index: 30; }
 
 @media (max-width: 860px) {
-  .page, .cal-app { grid-template-columns: 1fr; }
+  .page, .cal-app { grid-template-columns: minmax(0, 1fr); }
   .left { border-right: 0; border-bottom: 1px solid var(--line); }
   .side { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
   .side .brand { display: none; }
   .side a { margin: 0; border-radius: 18px; white-space: nowrap; }
   .set { grid-template-columns: 1fr; }
   .row { grid-template-columns: 1fr; }
-  #phone { transform: scale(.8); transform-origin: bottom right; right: 10px; bottom: 10px; }
+  #phone { position: static; margin: 24px auto; } /* mobil: under innehållet, täcker inte kvittot */
 }
 </style>
 </head>
 <body>
 
 <div class="demobar">
-  <span><b>GOOGLE-DEMO</b> · Flödet som Google Kalenders bokningsschema gör det, med Bildfabs inställningar. Återskapat för att kunna klicka runt utan konto.</span>
+  <span><b>GOOGLE-DEMO</b> · Flödet som Google Kalenders bokningsschema gör det, med Bildfabs inställningar. Återskapat efter Googles hjälpsidor för att kunna klicka runt utan konto: stegen och funktionerna stämmer, utseendet är förenklat.</span>
   <nav>
     <a href="#/" id="d-kund">Kundvy</a>
     <a href="#/kalender" id="d-foto">Fotografvy</a>
@@ -201,7 +201,7 @@ function spara() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {
 // Google lägger tider efter varandra: längd + buffert. Ingen preliminär status finns, en bokning är en bokning.
 function lediga(datum) {
   const d = fromIso(datum), dag = S.schema[d.getDay()];
-  if (!dag.pa) return [];
+  if (!dag.pa || d > Date.now() + 60 * 864e5) return []; // bokningsfönster: max 60 dagar framåt
   const dagens = S.bokningar.filter(b => b.datum === datum);
   if (S.maxPerDag && dagens.length >= S.maxPerDag) return [];
   const grans = Date.now() + VARSEL_H * 36e5, ut = [];
@@ -248,7 +248,7 @@ function vyBokningssida() {
     <div class="right">
       <div class="wkhead">
         <button data-act="vecka" data-d="-1" ${V.vecka <= 0 ? "disabled" : ""} aria-label="Föregående vecka">‹</button>
-        <button data-act="vecka" data-d="1" aria-label="Nästa vecka">›</button>
+        <button data-act="vecka" data-d="1" ${V.vecka >= 8 ? "disabled" : ""} aria-label="Nästa vecka">›</button>
         <h2>${start.toLocaleDateString("sv-SE", { day: "numeric", month: "short" })} – ${slut.toLocaleDateString("sv-SE", { day: "numeric", month: "short", year: "numeric" })}</h2>
       </div>
       <p class="sub">Tider i Europe/Stockholm</p>
