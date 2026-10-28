@@ -39,6 +39,10 @@ main { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
 .pk button small { color: var(--muted); }
 .pk button span { font-family: var(--mono); font-size: 13px; }
 .pk button.on { border: 2px solid var(--ink); padding: 11px 13px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--soft); border-radius: 12px; padding: 4px; margin-bottom: 10px; }
+.seg button { border: 0; background: none; border-radius: 9px; padding: 9px; font-weight: 500; }
+.seg button.on { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); font-weight: 700; }
+.hint a { color: var(--ink); }
 .hint { font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
 .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
 .chips button { flex: 0 0 auto; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 8px 12px; text-align: center; min-width: 58px; }
@@ -128,10 +132,13 @@ main { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
 <script src="../restid.js"></script>
 <script>
 const PAKET = [
-  { id: "lgh", namn: "Lägenhet", min: 90, info: "Upp till 25 bilder" },
-  { id: "villa", namn: "Villa / radhus", min: 150, info: "30–40 bilder" },
-  { id: "villa-d", namn: "Villa + drönare", min: 180, info: "Villa + 5–8 drönarbilder" },
+  { id: "lgh", kund: "maklare", namn: "Lägenhet", min: 90, info: "Upp till 25 bilder" },
+  { id: "villa", kund: "maklare", namn: "Villa / radhus", min: 150, info: "30–40 bilder" },
+  { id: "villa-d", kund: "maklare", namn: "Villa + drönare", min: 180, info: "Villa + 5–8 drönarbilder" },
+  { id: "ark-halv", kund: "arkitekt", namn: "Arkitektur, halvdag", min: 240, info: "Exteriör och interiör, 15–25 bilder" },
+  { id: "ark-hel", kund: "arkitekt", namn: "Arkitektur, heldag", min: 420, info: "Större projekt, flera byggnader" },
 ];
+// ponytail: längderna är gissningar, stäm av med Bildfab
 const STANDARD_RESA = 30; // antagen restid enkel väg när adressen saknas, minuter
 const KEY = "bildfab-mobil-demo";
 const ROLL = (new URLSearchParams(location.search).get("roll") || window.name) === "fotograf" ? "fotograf" : "maklare";
@@ -202,7 +209,7 @@ function push(rubrik, text, vid) {
 }
 
 // ---------- MÄKLARE ----------
-const M = { flik: "boka", paket: "villa", adress: "", restid: null, datum: null, tid: null, redigera: false, installera: true };
+const M = { flik: "boka", kund: "maklare", paket: "villa", adress: "", restid: null, datum: null, tid: null, redigera: false, installera: true };
 let profil = (() => { try { return JSON.parse(localStorage.getItem(KEY + "-profil")) || null; } catch { return null; } })();
 const sparaProfil = () => { try { localStorage.setItem(KEY + "-profil", JSON.stringify(profil)); } catch {} };
 
@@ -236,7 +243,7 @@ function makProfilHtml() {
   const p = profil || {};
   return `<form id="profilform" class="grid2">
     <input name="namn" placeholder="Ditt namn" value="${esc(p.namn)}" autocomplete="name" required>
-    <input name="firma" placeholder="Mäklarfirma" value="${esc(p.firma)}" autocomplete="organization">
+    <input name="firma" placeholder="Företag (mäklarfirma eller byrå)" value="${esc(p.firma)}" autocomplete="organization">
     <input name="epost" type="email" placeholder="E-post" value="${esc(p.epost)}" autocomplete="email" required>
     <input name="telefon" type="tel" placeholder="Mobil" value="${esc(p.telefon)}" autocomplete="tel" required>
     <button class="btn sec" type="submit">Spara mina uppgifter</button>
@@ -245,7 +252,10 @@ function makProfilHtml() {
 function makBoka() {
   $("#main").innerHTML = `
     ${M.installera ? `<div class="install">${logga}<div><b>Lägg Bildfab på hemskärmen</b><br>Boka på 20 sekunder och få svar som notis.</div><button data-act="installera">Lägg till</button></div>` : ""}
-    <div class="sec"><h3>1 · Paket</h3><div class="pk">${PAKET.map(p => `<button data-paket="${p.id}" class="${p.id === M.paket ? "on" : ""}"><div><b>${p.namn}</b><small>${p.info}</small></div><span>${fmtMin(p.min)}</span></button>`).join("")}</div></div>
+    <div class="sec"><h3>1 · Uppdrag</h3>
+      <div class="seg">${[["maklare", "Mäklare"], ["arkitekt", "Arkitekt / byrå"]].map(([k, t]) => `<button data-kund="${k}" class="${M.kund === k ? "on" : ""}">${t}</button>`).join("")}</div>
+      <div class="pk">${PAKET.filter(p => p.kund === M.kund).map(p => `<button data-paket="${p.id}" class="${p.id === M.paket ? "on" : ""}"><div><b>${p.namn}</b><small>${p.info}</small></div><span>${fmtMin(p.min)}</span></button>`).join("")}</div>
+      ${M.kund === "arkitekt" ? `<p class="hint">Osäker på datum, eller ett större uppdrag? <a href="../mvp/index.html" target="_top">Skicka en förfrågan med önskade datum</a> i stället.</p>` : ""}</div>
     <div class="sec"><h3>2 · Adress</h3><input id="adress" placeholder="Gata och nummer, ort" value="${esc(M.adress)}" autocomplete="street-address">
       <p class="hint" id="restid">${M.restid ? `🚗 ${esc(restidText(M.restid))}` : "Restiden räknas ut från Bildfabs kontor."}</p><div class="tot" id="tot"></div></div>
     <div class="sec"><h3>3 · Dag</h3><div class="chips" id="dagar"></div></div>
@@ -342,6 +352,7 @@ document.addEventListener("click", e => {
   const el = e.target.closest("button"); if (!el) return;
   const d = el.dataset;
   if (d.flik) { if (ROLL === "fotograf") F.flik = d.flik; else M.flik = d.flik; render(); return; }
+  if (d.kund) { M.kund = d.kund; M.paket = PAKET.find(p => p.kund === d.kund).id; render(); return; }
   if (d.paket) { M.paket = d.paket; document.querySelectorAll("[data-paket]").forEach(b => b.classList.toggle("on", b === el)); makDelar(); return; }
   if (d.dag) { M.datum = d.dag; M.tid = null; makDelar(); return; }
   if (d.tid) { M.tid = Number(d.tid); makDelar(); return; }
