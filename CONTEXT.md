@@ -21,3 +21,4 @@ Rekommendation i sidan: Cal.com Free + "Kräver bekräftelse" (verifiera i rikti
 - Headers (automated): 2026-10-30, pass, 6 of 6 on buildapp.se/bildfab, Observatory B+ on buildapp.se
 - WCAG 2.2 AA (automated): 2026-10-30, fail, axe 4.14.0 2 violations on 8 elements on buildapp.se/bildfab (mobile, one page): color-contrast (serious), scrollable-region-focusable (serious)
 - UX (automated): 2026-10-30, needs-review, 6 of 6 script checks pass on buildapp.se/bildfab (no --interact); screenshot review not done
+- OWASP Top 10: 2026-10-30, warn, code review (Mistral Large, medium and high checked by Claude), no live probe; 0 high, 1 medium: admin views have no access control, static demo with per-browser localStorage so no leak today; must not survive into the Worker build
