@@ -184,9 +184,8 @@ test("kopplaRestid: ett gammalt fel skriver inte över en nyare adress", async (
   assert.deepEqual(f.klara.map((v) => v && v.min), [10]);
 });
 
-// BACKLOG P2, rättat i grenen claude/forbattringar-2026-11-04 (senaste = "" vid varje inmatning).
-// Gör om till ett vanligt test när den är mergad.
-test("kopplaRestid: svar på väg skriver inte över en kortad adress", { todo: "rättas i claude/forbattringar-2026-11-04" }, async () => {
+// BACKLOG P2, rättat i PR #1 (senaste = "" vid varje inmatning).
+test("kopplaRestid: svar på väg skriver inte över en kortad adress", async () => {
   const r = ladda(lyckat());
   const f = falt(r);
   f.skriv("Storgatan 22");
