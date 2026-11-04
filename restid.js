@@ -27,6 +27,8 @@ function kopplaRestid(input, ut, klar, notis = "") {
   let timer, senaste = "";
   input.addEventListener("input", () => {
     clearTimeout(timer);
+    // Ogiltigförklara svar som redan är på väg: de gäller en adress som inte längre står i fältet.
+    senaste = "";
     const adress = input.value.trim();
     if (adress.length < 6) { ut.textContent = ""; klar(null); return; }
     timer = setTimeout(async () => {

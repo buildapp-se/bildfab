@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root { --ink: #000; --text: #4b4b4b; --muted: #808291; --line: #e3e5e8; --soft: #f4f6f7; --ok: #1f7a4d; --no: #cf2e2e; --mid: #b4531a;
+:root { --ink: #000; --text: #4b4b4b; --muted: #6b6d7a; --line: #e3e5e8; --soft: #f4f6f7; --ok: #1f7a4d; --no: #cf2e2e; --mid: #b4531a;
   --mono: "Roboto Mono", ui-monospace, monospace; --sans: "Roboto", system-ui, sans-serif; }
 * { box-sizing: border-box; }
 body { margin: 0; background: #fff; color: var(--text); font: 16px/1.6 var(--sans); }
@@ -80,7 +80,7 @@ ol li, ul li { margin-bottom: 6px; }
   </div>
 
   <h2>Önskemålen, punkt för punkt</h2>
-  <div class="scroll"><table>
+  <div class="scroll" tabindex="0" role="region" aria-label="Önskemålen, punkt för punkt"><table>
     <tr><th>Önskemål</th><th>Google</th><th>Cal.com</th><th>Bygga själv</th></tr>
     <tr><td>Kunden ser lediga tider och väljer</td><td class="y">Ja</td><td class="y">Ja</td><td class="y">Ja</td></tr>
     <tr><td>Vald tid blir preliminärt upptagen</td><td class="n">Nej, bokas direkt</td><td class="y">Ja</td><td class="y">Ja</td></tr>
@@ -98,7 +98,7 @@ ol li, ul li { margin-bottom: 6px; }
 
   <h2>Kostnader i detalj</h2>
   <p>Kurs 2026-10-27 (ECB): 1 USD = 9,94 kr, 1 EUR = 11,08 kr. Priser exklusive moms om inget annat sägs.</p>
-  <div class="scroll"><table>
+  <div class="scroll" tabindex="0" role="region" aria-label="Kostnader i detalj"><table>
     <tr><th>Alternativ</th><th>Pris</th><th>Vad man får för bokning</th></tr>
     <tr><td>Google, privat Gmail</td><td>0 kr</td><td>En bokningssida, en längd. Inga mejlpåminnelser.</td></tr>
     <tr><td>Google Workspace Business Starter</td><td>6,80 €, ca 75 kr/användare/mån</td><td>Googles prissida säger att bokningssidor inte ingår, hjälpsidan säger en sida. Motsägelsefullt, men fler sidor och påminnelser ingår i alla fall inte.</td></tr>
@@ -118,7 +118,7 @@ ol li, ul li { margin-bottom: 6px; }
 
   <h2>Bygga själv på Cloudflare</h2>
   <p>Ja, Cloudflare passar bra. Belastningen är liten (några bokningar om dagen), så gratisnivån räcker med stor marginal.</p>
-  <pre class="flow">Mäklaren                         Cloudflare                                Fotografen
+  <pre class="flow" tabindex="0" role="region" aria-label="Flödet mellan mäklaren, Cloudflare och fotografen">Mäklaren                         Cloudflare                                Fotografen
 ─────────                        ──────────                                ──────────
 boka.bildfab.se  ──GET /tider──▶  Worker räknar lediga tider:
                                   schema + bokningar + Google-kalendern

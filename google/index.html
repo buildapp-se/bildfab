@@ -252,7 +252,7 @@ function vyBokningssida() {
         <h2>${start.toLocaleDateString("sv-SE", { day: "numeric", month: "short" })} – ${slut.toLocaleDateString("sv-SE", { day: "numeric", month: "short", year: "numeric" })}</h2>
       </div>
       <p class="sub">Tider i Europe/Stockholm</p>
-      <div class="week">${dagar.map(d => {
+      <div class="week" tabindex="0" role="region" aria-label="Lediga tider den här veckan">${dagar.map(d => {
         const s = iso(d), tider = lediga(s);
         return `<div class="col"><div class="dh"><small>${VECKODAGAR[d.getDay()]}</small><b>${d.getDate()}</b></div>
           ${tider.length ? tider.map(t => `<button data-act="valjtid" data-d="${s}" data-t="${t}">${hhmm(t)}</button>`).join("") : `<div class="none">Ingen tillgänglighet</div>`}</div>`;
