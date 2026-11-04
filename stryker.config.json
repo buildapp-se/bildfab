@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutate": ["restid.js"],
+  "testRunner": "command",
+  "commandRunner": { "command": "node --test test/restid.test.js" },
+  "reporters": ["clear-text", "html", "json"],
+  "coverageAnalysis": "off",
+  "tempDirName": ".stryker-tmp"
+}
