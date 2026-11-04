@@ -564,37 +564,65 @@ form.addEventListener("submit", e => {
 });
 
 // ---------- fotografvy ----------
-const STARTTID = { "Förmiddag": 9, "Eftermiddag": 13, "Kvällsljus": 17, "Flexibelt": 9 };
+const STARTTID = { "Förmiddag": 9, "Eftermiddag": 13, "Kvällsljus": 17 };
 
+// Flexibelt har ingen starttid och blir en heldagshändelse i stället för en påhittad 09:00.
 function tider(b) {
-  const start = fromIso(b.valtDatum); start.setHours(STARTTID[b.fonster] ?? 9);
+  const start = fromIso(b.valtDatum);
+  const dag = d => iso(d).replaceAll("-", "");
+  if (!(b.fonster in STARTTID)) {
+    const nasta = new Date(start); nasta.setDate(nasta.getDate() + 1);
+    return [dag(start), dag(nasta), true];
+  }
+  start.setHours(STARTTID[b.fonster]);
   const slut = new Date(start.getTime() + (uppskattadTid(b) || 2) * 36e5);
-  const f = d => `${iso(d).replaceAll("-", "")}T${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}00`;
-  return [f(start), f(slut)];
+  const f = d => `${dag(d)}T${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}00`;
+  return [f(start), f(slut), false];
 }
 function titel(b) { return `Foto: ${b.foretag} (${b.ref})`; }
 function beskrivning(b) {
   return [`${b.tjanst.join(", ")}${b.tillagg.length ? " + " + b.tillagg.join(", ") : ""}`,
     `Objekt: ${b.objekttyp}${b.yta ? ", " + b.yta + " kvm" : ""}, ${b.bilder} bilder`,
+    b.fonster && `Tidsfönster: ${b.fonster}`,
+    b.restid && `Restid: ${b.restid.min} min enkel väg från kontoret (${b.restid.km.toFixed(1).replace(".", ",")} km)`,
     b.tilltrade && `Tillträde: ${b.tilltrade}`, b.ovrigt && `Övrigt: ${b.ovrigt}`,
     `Kontakt: ${b.namn}, ${b.epost}${b.telefon ? ", " + b.telefon : ""}`, `Fotograf: ${b.fotograf}`].filter(Boolean).join("\n");
 }
 function googleLank(b) {
-  const [s, e] = tider(b);
-  const p = new URLSearchParams({ action: "TEMPLATE", text: titel(b), dates: `${s}/${e}`, ctz: "Europe/Stockholm",
-    location: `${b.adress}, ${b.ort}`, details: beskrivning(b) });
+  const [s, e, heldag] = tider(b);
+  const p = new URLSearchParams({ action: "TEMPLATE", text: titel(b), dates: `${s}/${e}`,
+    ...(heldag ? {} : { ctz: "Europe/Stockholm" }), location: `${b.adress}, ${b.ort}`, details: beskrivning(b) });
   return "https://calendar.google.com/calendar/render?" + p;
 }
-function laddaNerIcs(b) {
-  const [s, e] = tider(b);
+// RFC 5545: rader över 75 oktetter viks med CRLF + mellanslag, utan att dela ett UTF-8-tecken.
+function vik(rad) {
+  const ut = []; let del = "", n = 0;
+  for (const tecken of rad) {
+    const b = new TextEncoder().encode(tecken).length;
+    if (n + b > (ut.length ? 74 : 75)) { ut.push(del); del = ""; n = 0; }
+    del += tecken; n += b;
+  }
+  ut.push(del);
+  return ut.join("\r\n ");
+}
+const VTIMEZONE = ["BEGIN:VTIMEZONE", "TZID:Europe/Stockholm",
+  "BEGIN:DAYLIGHT", "TZOFFSETFROM:+0100", "TZOFFSETTO:+0200", "TZNAME:CEST", "DTSTART:19700329T020000",
+  "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU", "END:DAYLIGHT",
+  "BEGIN:STANDARD", "TZOFFSETFROM:+0200", "TZOFFSETTO:+0100", "TZNAME:CET", "DTSTART:19701025T030000",
+  "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU", "END:STANDARD", "END:VTIMEZONE"];
+function icsText(b, nu = new Date()) {
+  const [s, e, heldag] = tider(b);
   const t = v => v.replace(/[\\,;]/g, m => "\\" + m).replace(/\n/g, "\\n");
-  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bildfabriken//Bokning demo//SV", "BEGIN:VEVENT",
-    `UID:${b.ref}@bildfab.se`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
-    `DTSTART;TZID=Europe/Stockholm:${s}`, `DTEND;TZID=Europe/Stockholm:${e}`,
+  const tid = heldag ? [`DTSTART;VALUE=DATE:${s}`, `DTEND;VALUE=DATE:${e}`]
+    : [`DTSTART;TZID=Europe/Stockholm:${s}`, `DTEND;TZID=Europe/Stockholm:${e}`];
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bildfabriken//Bokning demo//SV", ...(heldag ? [] : VTIMEZONE),
+    "BEGIN:VEVENT", `UID:${b.ref}@bildfab.se`, `DTSTAMP:${nu.toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`, ...tid,
     `SUMMARY:${t(titel(b))}`, `LOCATION:${t(b.adress + ", " + b.ort)}`, `DESCRIPTION:${t(beskrivning(b))}`,
-    "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    "END:VEVENT", "END:VCALENDAR"].map(vik).join("\r\n") + "\r\n";
+}
+function laddaNerIcs(b) {
   const a = Object.assign(document.createElement("a"), {
-    href: URL.createObjectURL(new Blob([ics], { type: "text/calendar" })), download: b.ref + ".ics" });
+    href: URL.createObjectURL(new Blob([icsText(b)], { type: "text/calendar" })), download: b.ref + ".ics" });
   a.click(); URL.revokeObjectURL(a.href);
 }
 function mailLank(b) {
