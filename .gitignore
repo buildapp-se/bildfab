@@ -1,3 +1,7 @@
 .claude/
 .playwright-mcp/
 .repowise/
+# Stryker (mutationstest, `npm i --no-save @stryker-mutator/core && npx stryker run`): rapporter, temp och paket.
+reports/
+.stryker-tmp/
+node_modules/
