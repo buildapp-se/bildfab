@@ -507,13 +507,13 @@ function vyTillganglighet() {
       return `<div class="d">
         <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VECKODAGAR[d]}dag"><span></span></label>
         <b style="text-transform:capitalize">${VECKODAGAR[d]}dag</b>
-        ${s.pa ? `<div class="times"><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till"></div>` : `<span class="off">Otillgänglig</span>`}
+        ${s.pa ? `<div class="times"><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran" aria-label="${VECKODAGAR[d]}dag från"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till" aria-label="${VECKODAGAR[d]}dag till"></div>` : `<span class="off">Otillgänglig</span>`}
       </div>`;
     }).join("")}</div>
     <div class="overrides">
       <h2 style="font-size:15px">Datumundantag</h2>
       <p style="color:var(--muted);margin:4px 0 0">Semester, sjukdom eller fullbokat: markera dagen som otillgänglig.</p>
-      <form class="add" id="blockform"><input type="date" name="d" min="${iso(new Date())}" required><button class="btn" type="submit">Lägg till</button></form>
+      <form class="add" id="blockform"><input type="date" name="d" min="${iso(new Date())}" required aria-label="Datum att blockera"><button class="btn" type="submit">Lägg till</button></form>
       <ul>${S.blockerade.sort().map(d => `<li><span>${esc(langt(d))} · otillgänglig hela dagen</span><button class="btn sec" data-act="avblockera" data-d="${d}">Ta bort</button></li>`).join("") || `<li style="color:var(--muted)">Inga undantag.</li>`}</ul>
     </div>`);
 }

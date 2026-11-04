@@ -10,7 +10,7 @@
 <style>
 :root {
   --ink: #202124; --text: #3c4043; --muted: #5f6368; --line: #dadce0; --soft: #f1f3f4; --bg: #fff;
-  --blue: #1a73e8; --bluebg: #e8f0fe; --ev: #039be5; --warnbg: #fef7e0; --warn: #b06000; --no: #d93025;
+  --blue: #1a73e8; --bluebg: #e8f0fe; --ev: #0277bd; --warnbg: #fef7e0; --warn: #a15700; --no: #d93025;
   --sans: "Roboto", system-ui, sans-serif; --mono: "Roboto Mono", ui-monospace, monospace;
 }
 * { box-sizing: border-box; }
@@ -338,23 +338,23 @@ function vyInstallningar() {
   const ordning = [1, 2, 3, 4, 5, 6, 0];
   return app("installningar", `<h1>Bokningsschema</h1><p class="sub">Inställningarna som styr bokningssidan. Ändringar syns direkt i kundvyn.</p>
     <div class="settings">
-      <div class="set"><b>Titel</b><input value="${esc(S.titel)}" data-set="titel"></div>
-      <div class="set"><b>Bokningens längd</b><select data-set="min">${[60, 90, 120, 150, 180].map(m => `<option value="${m}" ${S.min === m ? "selected" : ""}>${langd(m)}</option>`).join("")}</select></div>
+      <div class="set"><b>Titel</b><input value="${esc(S.titel)}" data-set="titel" aria-label="Titel"></div>
+      <div class="set"><b>Bokningens längd</b><select data-set="min" aria-label="Bokningens längd">${[60, 90, 120, 150, 180].map(m => `<option value="${m}" ${S.min === m ? "selected" : ""}>${langd(m)}</option>`).join("")}</select></div>
       <div class="set"><b>Allmän tillgänglighet</b><div>${ordning.map(d => {
         const s = S.schema[d];
         return `<div class="d"><b style="text-transform:capitalize;font-weight:500">${VECKODAGAR[d]}</b><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VECKODAGAR[d]} tillgänglig">
-          ${s.pa ? `<span><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till"></span>` : `<span style="color:var(--muted)">Inte tillgänglig</span>`}</div>`;
+          ${s.pa ? `<span><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran" aria-label="${VECKODAGAR[d]} från"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till" aria-label="${VECKODAGAR[d]} till"></span>` : `<span style="color:var(--muted)">Inte tillgänglig</span>`}</div>`;
       }).join("")}</div></div>
       <div class="set"><b>Bokningsfönster</b><div>Max 60 dagar framåt, minst 24 timmars varsel</div></div>
-      <div class="set"><b>Buffert mellan bokningar</b><select data-set="buffert">${[0, 15, 30, 45, 60].map(m => `<option value="${m}" ${S.buffert === m ? "selected" : ""}>${m} min</option>`).join("")}</select></div>
-      <div class="set"><b>Max bokningar per dag</b><select data-set="maxPerDag">${[0, 2, 3, 4, 5].map(n => `<option value="${n}" ${S.maxPerDag === n ? "selected" : ""}>${n || "Ingen gräns"}</option>`).join("")}</select></div>
-      <div class="set"><b>Kontrollera kalendrar</b><div class="chk"><input type="checkbox" checked disabled> Upptagen tid i fotografens kalender blockerar bokningssidan</div></div>
+      <div class="set"><b>Buffert mellan bokningar</b><select data-set="buffert" aria-label="Buffert mellan bokningar">${[0, 15, 30, 45, 60].map(m => `<option value="${m}" ${S.buffert === m ? "selected" : ""}>${m} min</option>`).join("")}</select></div>
+      <div class="set"><b>Max bokningar per dag</b><select data-set="maxPerDag" aria-label="Max bokningar per dag">${[0, 2, 3, 4, 5].map(n => `<option value="${n}" ${S.maxPerDag === n ? "selected" : ""}>${n || "Ingen gräns"}</option>`).join("")}</select></div>
+      <div class="set"><b>Kontrollera kalendrar</b><label class="chk"><input type="checkbox" checked disabled> Upptagen tid i fotografens kalender blockerar bokningssidan</label></div>
       <div class="set"><b>Bokningsformulär</b><div>Förnamn, efternamn, e-post (alltid)<br>+ Telefon, Objektets adress, Mäklarfirma, Tillträde (egna frågor)</div></div>
       <div class="set"><b>Kräver Google Workspace</b><div>
-        <div class="chk dis"><input type="checkbox" disabled> Flera bokningssidor (t.ex. lägenhet 1,5 h och villa 2,5 h) <span class="ws">Workspace</span></div>
-        <div class="chk dis"><input type="checkbox" disabled> E-postpåminnelser till kunden <span class="ws">Workspace</span></div>
-        <div class="chk dis"><input type="checkbox" disabled> Verifiera kundens e-post innan bokning <span class="ws">Workspace</span></div>
-        <div class="chk dis"><input type="checkbox" disabled> Betalning via Stripe <span class="ws">Workspace</span></div>
+        <label class="chk dis"><input type="checkbox" disabled> Flera bokningssidor (t.ex. lägenhet 1,5 h och villa 2,5 h) <span class="ws">Workspace</span></label>
+        <label class="chk dis"><input type="checkbox" disabled> E-postpåminnelser till kunden <span class="ws">Workspace</span></label>
+        <label class="chk dis"><input type="checkbox" disabled> Verifiera kundens e-post innan bokning <span class="ws">Workspace</span></label>
+        <label class="chk dis"><input type="checkbox" disabled> Betalning via Stripe <span class="ws">Workspace</span></label>
       </div></div>
       <div class="set"><b>Finns inte alls</b><div style="color:var(--no)">Preliminär bokning, godkänn/avböj, restid som påverkar lediga tider.</div></div>
     </div>`);
