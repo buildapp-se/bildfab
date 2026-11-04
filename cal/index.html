@@ -98,7 +98,7 @@ label.f > span { display: block; margin-bottom: 5px; }
 .side .me img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); object-fit: contain; padding: 2px; }
 .side a { display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: var(--text); margin-bottom: 2px; }
 .side a.on, .side a:hover { background: var(--soft); color: var(--ink); font-weight: 500; }
-.side .n { background: var(--ink); color: #fff; border-radius: 10px; font-size: 11px; padding: 1px 7px; }
+.side .n { align-self: center; background: var(--ink); color: #fff; border-radius: 10px; font-size: 11px; line-height: 16px; padding: 1px 7px; }
 .main { padding: 28px 32px 80px; max-width: 980px; }
 .main > h1 { font-size: 20px; }
 .main > p.sub { color: var(--muted); margin: 4px 0 18px; }
@@ -159,9 +159,10 @@ label.f > span { display: block; margin-bottom: 5px; }
   .booker, .booker.form { grid-template-columns: 1fr; }
   .b-info { border-right: 0; border-bottom: 1px solid var(--line); }
   .b-slots { border-left: 0; border-top: 1px solid var(--line); }
-  .admin { grid-template-columns: 1fr; }
+  .admin { grid-template-columns: 1fr; align-content: start; }
   .side { display: flex; gap: 4px; overflow-x: auto; padding: 10px; border-right: 0; border-bottom: 1px solid var(--line); }
   .side .me { display: none; }
+  .side a { flex: none; align-items: center; gap: 8px; min-height: 44px; white-space: nowrap; margin-bottom: 0; }
   .main { padding: 20px 16px 80px; }
   .bk { grid-template-columns: 1fr; }
   .bk .acts { justify-content: flex-start; }
