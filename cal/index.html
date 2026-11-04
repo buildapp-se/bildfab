@@ -174,7 +174,7 @@ label.f > span { display: block; margin-bottom: 5px; }
 </head>
 <body>
 
-<div class="demobar">
+<header class="demobar">
   <span><b>CAL.COM-DEMO</b> · Flödet som Cal.com gör det, med Bildfabs inställningar. Återskapat efter Cal.coms hjälpsidor för att kunna klicka runt utan konto: stegen och funktionerna stämmer, utseendet är förenklat.</span>
   <nav>
     <a href="#/" id="d-kund">Kundvy</a>
@@ -182,8 +182,8 @@ label.f > span { display: block; margin-bottom: 5px; }
     <a href="../index.html">← Alla alternativ</a>
     <button type="button" data-act="aterstall">Återställ demo</button>
   </nav>
-</div>
-<div id="app"></div>
+</header>
+<main id="app"></main>
 <div id="phone" hidden></div>
 
 <script src="../restid.js"></script>
@@ -457,7 +457,7 @@ function admin(aktiv, innehall) {
   const obek = S.bokningar.filter(b => b.status === "pending").length;
   const länk = (h, txt, n) => `<a href="#/admin/${h}" class="${aktiv === h ? "on" : ""}">${txt}${n ? `<span class="n">${n}</span>` : ""}</a>`;
   return `<div class="admin">
-    <aside class="side">
+    <nav class="side" aria-label="Fotografens meny">
       <div class="me">${logga}Bildfabriken</div>
       ${länk("obekraftade", "Obekräftade", obek)}
       ${länk("kommande", "Kommande")}
@@ -465,7 +465,7 @@ function admin(aktiv, innehall) {
       ${länk("tillganglighet", "Tillgänglighet")}
       ${länk("inkorg", "Inkorg (demo)")}
       <a href="#/">Öppna bokningssidan ↗</a>
-    </aside>
+    </nav>
     <section class="main">${innehall}</section>
   </div>`;
 }

@@ -142,7 +142,7 @@ label.f > span { display: block; font-size: 12px; color: var(--muted); margin-bo
 </head>
 <body>
 
-<div class="demobar">
+<header class="demobar">
   <span><b>GOOGLE-DEMO</b> · Flödet som Google Kalenders bokningsschema gör det, med Bildfabs inställningar. Återskapat efter Googles hjälpsidor för att kunna klicka runt utan konto: stegen och funktionerna stämmer, utseendet är förenklat.</span>
   <nav>
     <a href="#/" id="d-kund">Kundvy</a>
@@ -150,8 +150,8 @@ label.f > span { display: block; font-size: 12px; color: var(--muted); margin-bo
     <a href="../index.html">← Alla alternativ</a>
     <button type="button" data-act="aterstall">Återställ demo</button>
   </nav>
-</div>
-<div id="app"></div>
+</header>
+<main id="app"></main>
 <div id="modal"></div>
 <div id="phone" hidden></div>
 
@@ -298,8 +298,8 @@ function vyBokad(b) {
 // ---------- fotograf ----------
 function app(aktiv, innehall) {
   const l = (h, t) => `<a href="#/${h}" class="${aktiv === h ? "on" : ""}">${t}</a>`;
-  return `<div class="cal-app"><aside class="side"><div class="brand">Kalender</div>
-    ${l("kalender", "Veckovy")}${l("installningar", "Bokningsschema")}${l("inkorg", "Inkorg (demo)")}<a href="#/">Öppna bokningssidan ↗</a></aside>
+  return `<div class="cal-app"><nav class="side" aria-label="Kalendermeny"><div class="brand">Kalender</div>
+    ${l("kalender", "Veckovy")}${l("installningar", "Bokningsschema")}${l("inkorg", "Inkorg (demo)")}<a href="#/">Öppna bokningssidan ↗</a></nav>
     <section class="main">${innehall}</section></div>`;
 }
 const VARNING = `<div class="warnbox"><b>Så fungerar Google:</b> kunden bokar direkt. Det finns ingen preliminär bokning och ingen ja/nej-knapp.
