@@ -13,6 +13,48 @@ Demos som jämför bokningslösningar för Bildfabriken (bildfab.se, Umeå, 2 fo
 
 Rekommendation i sidan: Cal.com Free + "Kräver bekräftelse" (verifiera i riktigt konto), bygga själv på Cloudflare när restid som styr tider behövs.
 
+## Architecture
+
+Statiska demosidor utan server. Varje sida sparar sin demodata i webbläsarens localStorage; restiden hämtas direkt från webbläsaren.
+
+```mermaid
+graph LR
+  subgraph PAGES["GitHub Pages, buildapp.se/bildfab/"]
+    INDEX[index.html jämförelse och kostnader]
+    GOOGLE[google/ återskapat flöde]
+    CAL[cal/ återskapat flöde]
+    MVP[mvp/ förfrågningsskiss]
+    MOBIL[mobil/index.html två telefoner]
+    APP[mobil/app.html]
+    RESTID[restid.js]
+  end
+
+  LS[(localStorage i webbläsaren)]
+  NOMINATIM[OpenStreetMap Nominatim]
+  OSRM[OSRM demoserver]
+
+  MOBIL -->|srcdoc| APP
+  GOOGLE --> RESTID
+  CAL --> RESTID
+  MVP --> RESTID
+  APP --> RESTID
+  RESTID -->|adress till koordinat| NOMINATIM
+  RESTID -->|bilväg| OSRM
+  INDEX --> LS
+  GOOGLE --> LS
+  CAL --> LS
+  MVP --> LS
+  APP --> LS
+```
+
+## Stack
+
+- Frontend: statisk HTML och vanilla JS, inget bygge
+- Data: demodata i localStorage per webbläsare
+- Restid: `restid.js` mot Nominatim och OSRM:s demoserver, bara för demo
+- Tester: inga
+- Hosting: GitHub Pages, `buildapp.se/bildfab/`
+
 ## Audits
 - Secrets: 2026-10-30, pass, gitleaks 0 findings in 5 commits
 - Actions: 2026-10-30, n/a, no GitHub Actions workflows
