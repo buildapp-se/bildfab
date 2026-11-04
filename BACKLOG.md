@@ -6,7 +6,6 @@ Från granskningen 2026-10-28. P1 rättat samma dag.
 - mvp .ics: saknar VTIMEZONE, ingen radvikning, restid ej med i händelsen, "Flexibelt" blir 09:00.
 - cal: inget mejl till kunden vid förfrågan/avbokning, låsskärmen visar Godkänn/Avböj på mejlnotis.
 - Schemaändringar varnar inte för befintliga bokningar i cal och google (mobil varnar för lediga dagar).
-- `restid.js`: gammalt svar kan skriva över när adressen kortas.
 - google: första veckan kan vara helt tom, mäklaren måste hitta ›-pilen.
 
 ## P3
