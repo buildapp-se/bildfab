@@ -98,7 +98,7 @@ label.f > span { display: block; margin-bottom: 5px; }
 .side .me img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); object-fit: contain; padding: 2px; }
 .side a { display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: var(--text); margin-bottom: 2px; }
 .side a.on, .side a:hover { background: var(--soft); color: var(--ink); font-weight: 500; }
-.side .n { background: var(--ink); color: #fff; border-radius: 10px; font-size: 11px; padding: 1px 7px; }
+.side .n { align-self: center; background: var(--ink); color: #fff; border-radius: 10px; font-size: 11px; line-height: 16px; padding: 1px 7px; }
 .main { padding: 28px 32px 80px; max-width: 980px; }
 .main > h1 { font-size: 20px; }
 .main > p.sub { color: var(--muted); margin: 4px 0 18px; }
@@ -109,8 +109,8 @@ label.f > span { display: block; margin-bottom: 5px; }
 .bk { display: grid; grid-template-columns: 150px 1fr auto; gap: 16px; padding: 16px 18px; border-bottom: 1px solid var(--line); align-items: start; }
 .bk:last-child { border-bottom: 0; }
 .bk .when b { display: block; color: var(--ink); }
-.bk .when span { color: var(--muted); display: block; margin-bottom: 6px; }
-.bk h3 { font-size: 14px; font-weight: 600; }
+.bk .when span:not(.badge) { color: var(--muted); display: block; margin-bottom: 6px; }
+.bk h2 { font-size: 14px; font-weight: 600; }
 .bk p { margin: 2px 0 0; color: var(--muted); }
 .bk .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 .bk .reason { grid-column: 2 / 4; display: flex; gap: 8px; }
@@ -136,7 +136,7 @@ label.f > span { display: block; margin-bottom: 5px; }
 
 .mail { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
 .mail .hd { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 12px; }
-.mail h3 { font-size: 15px; margin: 4px 0 8px; }
+.mail h2 { font-size: 15px; margin: 4px 0 8px; }
 .mail pre { white-space: pre-wrap; font: inherit; margin: 0 0 10px; }
 
 /* mobil-pling */
@@ -159,9 +159,10 @@ label.f > span { display: block; margin-bottom: 5px; }
   .booker, .booker.form { grid-template-columns: 1fr; }
   .b-info { border-right: 0; border-bottom: 1px solid var(--line); }
   .b-slots { border-left: 0; border-top: 1px solid var(--line); }
-  .admin { grid-template-columns: 1fr; }
+  .admin { grid-template-columns: 1fr; align-content: start; }
   .side { display: flex; gap: 4px; overflow-x: auto; padding: 10px; border-right: 0; border-bottom: 1px solid var(--line); }
   .side .me { display: none; }
+  .side a { flex: none; align-items: center; gap: 8px; min-height: 44px; white-space: nowrap; margin-bottom: 0; }
   .main { padding: 20px 16px 80px; }
   .bk { grid-template-columns: 1fr; }
   .bk .acts { justify-content: flex-start; }
@@ -173,7 +174,7 @@ label.f > span { display: block; margin-bottom: 5px; }
 </head>
 <body>
 
-<div class="demobar">
+<header class="demobar">
   <span><b>CAL.COM-DEMO</b> · Flödet som Cal.com gör det, med Bildfabs inställningar. Återskapat efter Cal.coms hjälpsidor för att kunna klicka runt utan konto: stegen och funktionerna stämmer, utseendet är förenklat.</span>
   <nav>
     <a href="#/" id="d-kund">Kundvy</a>
@@ -181,8 +182,8 @@ label.f > span { display: block; margin-bottom: 5px; }
     <a href="../index.html">← Alla alternativ</a>
     <button type="button" data-act="aterstall">Återställ demo</button>
   </nav>
-</div>
-<div id="app"></div>
+</header>
+<main id="app"></main>
 <div id="phone" hidden></div>
 
 <script src="../restid.js"></script>
@@ -456,7 +457,7 @@ function admin(aktiv, innehall) {
   const obek = S.bokningar.filter(b => b.status === "pending").length;
   const länk = (h, txt, n) => `<a href="#/admin/${h}" class="${aktiv === h ? "on" : ""}">${txt}${n ? `<span class="n">${n}</span>` : ""}</a>`;
   return `<div class="admin">
-    <aside class="side">
+    <nav class="side" aria-label="Fotografens meny">
       <div class="me">${logga}Bildfabriken</div>
       ${länk("obekraftade", "Obekräftade", obek)}
       ${länk("kommande", "Kommande")}
@@ -464,7 +465,7 @@ function admin(aktiv, innehall) {
       ${länk("tillganglighet", "Tillgänglighet")}
       ${länk("inkorg", "Inkorg (demo)")}
       <a href="#/">Öppna bokningssidan ↗</a>
-    </aside>
+    </nav>
     <section class="main">${innehall}</section>
   </div>`;
 }
@@ -479,7 +480,7 @@ function vyBokningar(flik) {
   const lista = S.bokningar.filter(urval).sort((a, b) => (a.datum + pad(a.start)).localeCompare(b.datum + pad(b.start)));
   const rad = b => `<div class="bk">
     <div class="when"><b>${esc(kort(b.datum))}</b><span>${tidsspann(b)}</span><span class="badge ${b.status}">${STATUS[b.status]}</span></div>
-    <div><h3>${esc(typ(b.typ).namn)} mellan Bildfabriken och ${esc(b.namn)}</h3>
+    <div><h2>${esc(typ(b.typ).namn)} mellan Bildfabriken och ${esc(b.namn)}</h2>
       <p>📍 ${esc(b.adress)}${b.firma ? " · " + esc(b.firma) : ""}</p>
       ${b.restid ? `<p>🚗 ${esc(restidText(b.restid))}</p>` : ""}
       <p>${esc(b.epost)} · ${esc(b.telefon)}</p>
@@ -506,13 +507,13 @@ function vyTillganglighet() {
       return `<div class="d">
         <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VECKODAGAR[d]}dag"><span></span></label>
         <b style="text-transform:capitalize">${VECKODAGAR[d]}dag</b>
-        ${s.pa ? `<div class="times"><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till"></div>` : `<span class="off">Otillgänglig</span>`}
+        ${s.pa ? `<div class="times"><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran" aria-label="${VECKODAGAR[d]}dag från"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till" aria-label="${VECKODAGAR[d]}dag till"></div>` : `<span class="off">Otillgänglig</span>`}
       </div>`;
     }).join("")}</div>
     <div class="overrides">
-      <h3 style="font-size:15px">Datumundantag</h3>
+      <h2 style="font-size:15px">Datumundantag</h2>
       <p style="color:var(--muted);margin:4px 0 0">Semester, sjukdom eller fullbokat: markera dagen som otillgänglig.</p>
-      <form class="add" id="blockform"><input type="date" name="d" min="${iso(new Date())}" required><button class="btn" type="submit">Lägg till</button></form>
+      <form class="add" id="blockform"><input type="date" name="d" min="${iso(new Date())}" required aria-label="Datum att blockera"><button class="btn" type="submit">Lägg till</button></form>
       <ul>${S.blockerade.sort().map(d => `<li><span>${esc(langt(d))} · otillgänglig hela dagen</span><button class="btn sec" data-act="avblockera" data-d="${d}">Ta bort</button></li>`).join("") || `<li style="color:var(--muted)">Inga undantag.</li>`}</ul>
     </div>`);
 }
@@ -531,7 +532,7 @@ function vyInkorg() {
   return admin("inkorg", `<h1>Inkorg (demo)</h1><p class="sub">De mejl som Cal.com skickar i flödet. I verkligheten landar de i respektive persons vanliga mejl.</p>
     <div class="tabs"><a href="#" data-act="mejlflik" data-f="foto" class="${foto ? "on" : ""}">Fotografen (${FOTOGRAF})</a><a href="#" data-act="mejlflik" data-f="kund" class="${foto ? "" : "on"}">Kunderna</a></div>
     ${lista.map(m => `<div class="mail"><div class="hd"><span>Från: Cal.com · Till: ${esc(m.till)}</span><span>${new Date(m.tid).toLocaleString("sv-SE", { dateStyle: "short", timeStyle: "short" })}</span></div>
-      <h3>${esc(m.amne)}</h3><pre>${esc(m.text)}</pre><div style="display:flex;gap:8px">${m.knappar.map(k => knapp(k, m)).join("")}</div></div>`).join("") || `<div class="list"><div class="empty">Inga mejl ännu.</div></div>`}`);
+      <h2>${esc(m.amne)}</h2><pre>${esc(m.text)}</pre><div style="display:flex;gap:8px">${m.knappar.map(k => knapp(k, m)).join("")}</div></div>`).join("") || `<div class="list"><div class="empty">Inga mejl ännu.</div></div>`}`);
 }
 
 // ---------- routing ----------
