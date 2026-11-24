@@ -241,7 +241,7 @@ let S = ladda();
 function ladda() {
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.bokningar) return s; } catch {}
   const s = standard();
-  s.mejl.push(mejlForfragan(s.bokningar[1]));
+  s.mejl.push(mejlForfragan(s.bokningar[1]), mejlMottagen(s.bokningar[1]));
   return s;
 }
 function spara() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
@@ -277,11 +277,16 @@ function mejlForfragan(b) {
   return mejl(FOTOGRAF, `Ny bokningsförfrågan: ${typ(b.typ).namn}, ${kort(b.datum)} ${hhmm(b.start)}`,
     `${b.namn} vill boka:\n\n${detaljer(b)}\n\nTiden är preliminärt reserverad tills du svarar.`, b.id, ["godkann", "avboj"]);
 }
+// Kunden får ett kvitto direkt på att förfrågan är skickad, inte bara när fotografen svarat.
+function mejlMottagen(b) {
+  return mejl(b.epost, `Förfrågan skickad: ${typ(b.typ).namn}, ${kort(b.datum)} ${hhmm(b.start)}`,
+    `Hej ${b.namn.split(" ")[0]}!\n\nDin bokningsförfrågan har skickats till Bildfabriken. Tiden är preliminärt reserverad, och du får ett nytt mejl när fotografen har bekräftat.\n\n${detaljer(b)}`, b.id, ["hantera"]);
+}
 const hitta = id => S.bokningar.find(b => b.id === id);
 
 function skapa(b) {
   S.bokningar.push(b);
-  S.mejl.push(mejlForfragan(b));
+  S.mejl.push(mejlForfragan(b), mejlMottagen(b));
   spara();
   visaTelefon(b);
 }
@@ -302,9 +307,9 @@ function avboj(id, orsak) {
 function avboka(id, av, orsak) {
   const b = hitta(id); if (!b || !["pending", "accepted"].includes(b.status)) return;
   b.status = "cancelled"; b.orsak = orsak; b.avbokadAv = av;
-  const till = av === "kund" ? FOTOGRAF : b.epost;
-  S.mejl.push(mejl(till, `Avbokad: ${typ(b.typ).namn}, ${kort(b.datum)} ${hhmm(b.start)}`,
-    `Bokningen har avbokats av ${av === "kund" ? b.namn : "Bildfabriken"}.${orsak ? "\nOrsak: " + orsak : ""}\n\n${detaljer(b)}`, b.id));
+  // Cal.com mejlar avbokningen till båda parter, oavsett vem som avbokade.
+  for (const till of [FOTOGRAF, b.epost]) S.mejl.push(mejl(till, `Avbokad: ${typ(b.typ).namn}, ${kort(b.datum)} ${hhmm(b.start)}`,
+    `Bokningen har avbokats av ${av === "kund" ? b.namn : "Bildfabriken"}.${orsak ? "\nOrsak: " + orsak : ""}\n\n${detaljer(b)}`, b.id, till === FOTOGRAF ? [] : ["boka"]));
   spara(); toast("Avbokad. Tiden är ledig igen.");
 }
 
@@ -331,8 +336,8 @@ function visaTelefon(b) {
     <div class="note">
       <div class="app"><b>Mejl</b><span>nu</span></div>
       <b>Ny bokningsförfrågan: ${esc(typ(b.typ).namn)}</b>
-      <p>Till ${FOTOGRAF}. Knapparna finns i mejlet:</p>
-      <div class="acts"><button class="ja" data-act="godkann" data-id="${b.id}">Godkänn</button><button data-act="avboj-start" data-id="${b.id}">Avböj</button></div>
+      <p>Till ${FOTOGRAF}. Godkänn och Avböj finns inne i mejlet.</p>
+      <div class="acts" style="grid-template-columns:1fr"><a href="#/admin/inkorg" data-act="oppnamejl" style="text-align:center;padding:8px;border-radius:10px;background:#e5e7eb;color:#111;text-decoration:none;font-weight:600">Öppna mejlet</a></div>
     </div>
   </div>`;
   $("#phone").hidden = false;
@@ -498,9 +503,18 @@ function vyBokningar(flik) {
     <div class="list">${lista.length ? lista.map(rad).join("") : `<div class="empty">Inga bokningar här.</div>`}</div>`);
 }
 
+// Framtida bokningar (obekräftade och bekräftade) som inte längre ryms i schemat eller ligger på en blockerad dag. Cal.com låter dem ligga kvar.
+const utanforSchema = () => S.bokningar.filter(b => {
+  const dag = S.schema[fromIso(b.datum).getDay()];
+  return ["pending", "accepted"].includes(b.status) && b.datum >= iso(new Date()) &&
+    (!dag.pa || S.blockerade.includes(b.datum) || b.start < minuter(dag.fran) || b.start + typ(b.typ).min > minuter(dag.till));
+});
+
 function vyTillganglighet() {
-  const ordning = [1, 2, 3, 4, 5, 6, 0];
+  const ordning = [1, 2, 3, 4, 5, 6, 0], krock = utanforSchema();
   return admin("tillganglighet", `<h1>Tillgänglighet</h1><p class="sub">Arbetstider · Europe/Stockholm</p>
+    ${krock.length ? `<div class="tip" role="status" style="border-left-color:var(--pend)"><b>${krock.length === 1 ? "En bokning ligger" : krock.length + " bokningar ligger"} utanför de nya tiderna.</b> De ligger kvar tills du avbokar eller avböjer dem under Bokningar:<br>
+      ${krock.map(b => `${esc(kort(b.datum))} ${tidsspann(b)}, ${esc(b.namn)} (${STATUS[b.status].toLowerCase()})`).join("<br>")}</div>` : ""}
     <div class="tip">I riktiga Cal.com kopplas fotografernas Google-kalendrar in. Allt som redan står där (privata tider, andra jobb) blockerar automatiskt.</div>
     <div class="sched">${ordning.map(d => {
       const s = S.schema[d];
@@ -574,6 +588,7 @@ document.addEventListener("click", e => {
   else if (act === "avboka-avbryt") V.avbokar = false;
   else if (act === "mejlflik") { e.preventDefault(); V.mejlflik = el.dataset.f; }
   else if (act === "stangtelefon") { $("#phone").hidden = true; return; }
+  else if (act === "oppnamejl") { $("#phone").hidden = true; V.mejlflik = "foto"; return; }
   else if (act === "aterstall") { try { localStorage.removeItem(KEY); } catch {} S = ladda(); $("#phone").hidden = true; toast("Demodata återställd."); }
   render();
 });
