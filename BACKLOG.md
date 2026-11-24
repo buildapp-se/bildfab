@@ -7,6 +7,12 @@ Från granskningen 2026-10-28. P1 rättat samma dag.
 - mobil: restid räknas via kontoret, inte mellan jobb. Medvetet tak (`ponytail:` i `mobil/app.html`): mellan jobb kräver ett OSRM-anrop per granne och dag mot en demotjänst med 1 anrop/s. Görs i Worker-bygget, inte i demon.
 - Google- och Cal-demon är återskapade efter hjälpsidor, inte jämförda med riktiga konton. Skärmdumpar från ett riktigt konto skulle bekräfta utseendet.
 
+## Rättat 2026-11-24, UX-granskning (grenen `deep/2026-11-24`)
+ux-audit-skriptet på alla sex sidor i 390 px: 6 av 8 på live före, 7 av 8 lokalt efter (kvarvarande Fitts-varning gäller osynliga radio- och kryssrutor inuti 44 px-etiketter, falsklarm).
+- google, cal, mobil, mvp: demorad, veckopilar, tidsknappar, segmentknappar, menylänkar och val-piller minst 44 px (var 32 till 39 px).
+- mobil `app.html`: påbörjad bokning (kund, paket, adress, dag, tid) överlever omladdning; "Återställ demo" rensar utkastet.
+- mvp Fotografvy: 178 px sidledsscroll i 390 px (summeringen med tre `nowrap`-tal bredvid varandra). Nu staplad som sammanfattningsrutan, 0 px.
+
 ## Rättat 2026-11-24 (grenen `deep/2026-11-24`)
 Verifierat med jsdom-skript (före: 8 fel, efter: 0) och en låtsad klocka fredag 12:00 (före: tom startvecka, efter: vecka 1 med 12 tider).
 - cal: kunden får "Förfrågan skickad" direkt vid förfrågan, avbokningar mejlas till båda parter. Mejlnotisen på låsskärmen har inga Godkänn/Avböj-knappar längre, bara "Öppna mejlet" till inkorgen.

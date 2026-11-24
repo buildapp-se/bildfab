@@ -63,6 +63,6 @@ graph LR
 - Dependabot: 2026-10-30, pass, 0 open alerts
 - Headers (automated): 2026-10-30, pass, 6 of 6 on buildapp.se/bildfab, Observatory B+ on buildapp.se
 - WCAG 2.2 AA (automated): 2026-10-30, fail, axe 4.14.0 2 violations on 8 elements on buildapp.se/bildfab (mobile, one page): color-contrast (serious), scrollable-region-focusable (serious)
-- UX (automated): 2026-10-30, needs-review, 6 of 6 script checks pass on buildapp.se/bildfab (no --interact); screenshot review not done
+- UX (automated): 2026-11-24, warn, 7 of 8 script checks pass on all six routes with --interact (6 of 8 on live before the fix; 2026-10-30: needs-review, 6 of 6 without --interact); the one warn (Fitts, mvp) is opacity-0 radio and checkbox inputs inside 44 px labels, a script false positive; screenshot review 390 and 1440 px done, fixed 178 px horizontal scroll in mvp Fotografvy at 390 px
 - OWASP Top 10: 2026-10-30, warn, code review (Mistral Large, medium and high checked by Claude), no live probe; 0 high, 1 medium: admin views have no access control, static demo with per-browser localStorage so no leak today; must not survive into the Worker build
 - Mutation: 2026-11-04, pass, Stryker 98,51 % on restid.js (66 of 67, before 0 % with no tests), 1 survivor reviewed as equivalent; page scripts are UI, not mutation tested

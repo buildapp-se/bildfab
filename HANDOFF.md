@@ -14,6 +14,7 @@ reviewedAt: 2026-11-24
 - Mutationstest: inget nytt. `restid.js` är enda testbara källan (98,51 %, den överlevande ekvivalent); sidskripten ligger inline i HTML.
 - Kvar för Patrik: `uppskattadTid()`-timmarna och skärmdumpar från riktiga konton. Restid mellan jobb i mobil: medvetet tak, se BACKLOG.
 - En lokal server i bakgrunden stoppades av auto-läget, så sidorna provades i jsdom och live efter deploy, inte lokalt i webbläsare.
+- UX-granskning (ux-audit, fortsättning samma dag): skriptet med `--interact` på alla sex sidor, 6 av 8 på live före, 7 av 8 lokalt efter. Rättat: tryckytor 44 px, utkast i mobil, sidledsscroll i mvp Fotografvy (se BACKLOG). Skärmdumpar 390 och 1440 px: ingen sidledsscroll, inga JS-fel. Granskning: Goal-Gradient ok (mvp steg 01 till 04, mobil numrerade steg), Peak-End ok (bekräftelse-pling, kvitto), Jakob ok (logga och "Alla alternativ" tillbaka). Smak, lämnat: "TOTAL TID 2 h 30 min" radbryts i mobilens summering i 390 px.
 
 **2026-11-04, backlog** (grenen `claude/backlog-2026-11-04` ovanpå förbättringsgrenen, PR #4, mergad 2026-11-04):
 - mvp `.ics`: VTIMEZONE, radvikning vid 75 oktetter, restid och tidsfönster i beskrivningen (även Google-länken), Flexibelt blir heldagshändelse.
