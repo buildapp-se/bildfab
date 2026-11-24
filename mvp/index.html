@@ -87,7 +87,7 @@ textarea { min-height: 90px; resize: vertical; }
 /* calendar */
 .cal { border: 1px solid var(--line); padding: 16px; max-width: 520px; }
 .cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-family: var(--mono); color: var(--ink); }
-.cal-head button { border: 1px solid var(--line); background: #fff; width: 36px; height: 36px; cursor: pointer; }
+.cal-head button { border: 1px solid var(--line); background: #fff; width: 44px; height: 44px; cursor: pointer; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .cal-grid .dow { font: 500 11px var(--mono); color: var(--muted); text-align: center; padding: 4px 0; }
 .day { aspect-ratio: 1; border: 1px solid var(--line); background: #fff; cursor: pointer; font-family: var(--mono); font-size: 14px;
@@ -467,7 +467,7 @@ function lasForm() {
   return {
     kundtyp: fd.get("kundtyp"), tjanst: fd.getAll("tjanst"), tillagg: fd.getAll("tillagg"),
     adress: fd.get("adress")?.trim(), ort: fd.get("ort")?.trim(), objekttyp: fd.get("objekttyp"),
-    yta: Number(fd.get("yta")) || 0, bilder: fd.get("bilder"), projekt: fd.get("projekt")?.trim(),
+    yta: Math.max(0, Number(fd.get("yta")) || 0), bilder: fd.get("bilder"), projekt: fd.get("projekt")?.trim(),
     tilltrade: fd.get("tilltrade")?.trim(), ovrigt: fd.get("ovrigt")?.trim(),
     datum: [...valdaDatum], fonster: fd.get("fonster"), vader: fd.has("vader"),
     foretag: fd.get("foretag")?.trim(), namn: fd.get("namn")?.trim(), epost: fd.get("epost")?.trim(),
@@ -488,7 +488,29 @@ function validera(n, o) {
   return "";
 }
 
+// Utkast: en omladdning mitt i flödet behåller steg, val och datum.
+const UTKAST = STORE + "-utkast";
+function sparaUtkast() {
+  const falt = [...new FormData(form)].filter(([n]) => n !== "gdpr");
+  try { localStorage.setItem(UTKAST, JSON.stringify({ falt, valdaDatum, steg, restid: aktuellRestid })); } catch {}
+}
+function laddaUtkast() {
+  let u; try { u = JSON.parse(localStorage.getItem(UTKAST)); } catch {}
+  if (!u || !Array.isArray(u.falt)) return;
+  for (const el of form.elements) {
+    if (!el.name || el.name === "gdpr") continue;
+    const v = u.falt.filter(([n]) => n === el.name).map(([, x]) => x);
+    if (el.type === "checkbox" || el.type === "radio") el.checked = v.includes(el.value);
+    else if (v.length) el.value = v[0];
+  }
+  valdaDatum = (u.valdaDatum || []).filter(d => ["free", "few"].includes(tillganglighet(fromIso(d))));
+  aktuellRestid = u.restid || null;
+  if (aktuellRestid) $("#restid").textContent = `🚗 Från kontoret (${KONTOR.namn}): ${restidText(aktuellRestid)}`;
+  steg = Math.min(3, Math.max(0, Number(u.steg) || 0));
+}
+
 function visaSteg() {
+  sparaUtkast();
   document.querySelectorAll(".step").forEach(s => s.hidden = Number(s.dataset.step) !== steg);
   [...$("#steps").children].forEach((li, i) => { li.className = i === steg ? "on" : i < steg ? "done" : ""; });
   $("#back").style.visibility = steg ? "visible" : "hidden";
@@ -509,6 +531,7 @@ function ritaSammanfattning() {
     rad("Önskade datum", o.datum.map(fmtDag).join("<br>")) +
     rad("Tid", o.datum.length ? esc(o.fonster) : "");
   $("#est").innerHTML = tidsblock(o);
+  sparaUtkast();
 }
 
 function ritaKalender() {
@@ -554,6 +577,8 @@ form.addEventListener("change", ritaSammanfattning);
 
 form.addEventListener("submit", e => {
   e.preventDefault();
+  // Enter i ett fält före sista steget betyder Nästa, inte skicka (som visade kontaktstegets fel).
+  if (steg < 3) return $("#fwd").click();
   const o = lasForm();
   const fel = validera(3, o);
   if (fel) { $("#err").textContent = fel; return; }
@@ -703,7 +728,9 @@ $("#reset").onclick = () => { try { localStorage.removeItem(STORE); } catch {} r
 // ---------- routing ----------
 function route() {
   const v = location.hash.slice(1) || "boka";
-  const vy = ["boka", "klar", "fotograf"].includes(v) ? v : "boka";
+  let vy = ["boka", "klar", "fotograf"].includes(v) ? v : "boka";
+  // Tackrutan utan skickad förfrågan (omladdning, direktlänk) var tom: visa formuläret.
+  if (vy === "klar" && !$("#klar-ref").textContent) { vy = "boka"; history.replaceState(null, "", "#boka"); }
   for (const id of ["boka", "klar", "fotograf"]) $("#view-" + id).hidden = id !== vy;
   $("#nav-boka").classList.toggle("on", vy !== "fotograf");
   $("#nav-fotograf").classList.toggle("on", vy === "fotograf");
@@ -711,7 +738,7 @@ function route() {
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
-visaSteg(); ritaSammanfattning(); route();
+laddaUtkast(); visaSteg(); ritaSammanfattning(); route();
 </script>
 </body>
 </html>
