@@ -9,6 +9,8 @@ reviewedAt: 2026-11-24
 
 **Lokalt:** `uv run --no-project python -m http.server 8765` i repot. Push som `Elwyndaz` (remote har användarnamnet), även när `gh` har ett annat konto aktivt.
 
+**2026-11-24, buggjakt** (worktree `C:\dev\_wt\bildfab-1124h`, grenen `hunt/2026-11-24`, klar): alla sidor provade i 390 och 1440 px (inga JS-fel, ingen sidledsscroll). Fem fel i mvp-formuläret rättade, se BACKLOG. Webbläsarens bakåtknapp mitt i mvp-flödet lämnar sidan (stegen ligger inte i historiken), men utkastet gör att inget tappas när man kommer tillbaka. Google- och Cal-demon: okänd boknings-id vid omladdning hanteras redan.
+
 **2026-11-24, djuppass** (worktree `C:\dev\bildfab-deep-1124`, grenen `deep/2026-11-24`, pushad till main):
 - Fyra backlogpunkter i Google- och Cal-demon rättade, se BACKLOG "Rättat 2026-11-24". Verifierat med jsdom-skript före och efter, restidstesterna 14 av 14.
 - Mutationstest: inget nytt. `restid.js` är enda testbara källan (98,51 %, den överlevande ekvivalent); sidskripten ligger inline i HTML.
