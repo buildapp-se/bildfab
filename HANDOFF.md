@@ -1,5 +1,5 @@
 ---
-reviewedAt: 2026-11-04
+reviewedAt: 2026-11-24
 ---
 # Handoff
 
@@ -8,6 +8,12 @@ reviewedAt: 2026-11-04
 **Nästa:** Patrik frågar Bildfab om fotografen måste godkänna varje bokning. Nej: Google Kalender (de har Workspace). Ja: Cal.com. Restid som styr tider: bygga själv. Startsidan är omskriven efter den frågan.
 
 **Lokalt:** `uv run --no-project python -m http.server 8765` i repot. Push som `Elwyndaz` (remote har användarnamnet), även när `gh` har ett annat konto aktivt.
+
+**2026-11-24, djuppass** (worktree `C:\dev\bildfab-deep-1124`, grenen `deep/2026-11-24`, pushad till main):
+- Fyra backlogpunkter i Google- och Cal-demon rättade, se BACKLOG "Rättat 2026-11-24". Verifierat med jsdom-skript före och efter, restidstesterna 14 av 14.
+- Mutationstest: inget nytt. `restid.js` är enda testbara källan (98,51 %, den överlevande ekvivalent); sidskripten ligger inline i HTML.
+- Kvar för Patrik: `uppskattadTid()`-timmarna och skärmdumpar från riktiga konton. Restid mellan jobb i mobil: medvetet tak, se BACKLOG.
+- En lokal server i bakgrunden stoppades av auto-läget, så sidorna provades i jsdom och live efter deploy, inte lokalt i webbläsare.
 
 **2026-11-04, backlog** (grenen `claude/backlog-2026-11-04` ovanpå förbättringsgrenen, PR #4, mergad 2026-11-04):
 - mvp `.ics`: VTIMEZONE, radvikning vid 75 oktetter, restid och tidsfönster i beskrivningen (även Google-länken), Flexibelt blir heldagshändelse.
