@@ -214,7 +214,20 @@ function lediga(datum) {
   return ut;
 }
 
-const V = { vecka: 0, kalVecka: 0, valt: null, mejlflik: "foto", restid: null };
+// Första veckan med en ledig tid (max 8 veckor fram), så att kunden inte möter en tom vecka.
+function forstaLedigaVecka() {
+  for (let v = 0; v <= 8; v++) {
+    const m = mandag(v);
+    for (let i = 0; i < 7; i++) { const d = new Date(m); d.setDate(d.getDate() + i); if (lediga(iso(d)).length) return v; }
+  }
+  return 0;
+}
+// Framtida bokningar som inte längre ryms i schemat. Google låter dem ligga kvar.
+const utanforSchema = () => S.bokningar.filter(b => {
+  const dag = S.schema[fromIso(b.datum).getDay()];
+  return b.datum >= iso(new Date()) && (!dag.pa || b.start < minuter(dag.fran) || b.start + b.min > minuter(dag.till));
+});
+const V = { vecka: forstaLedigaVecka(), kalVecka: 0, valt: null, mejlflik: "foto", restid: null };
 const namn = b => `${b.fornamn} ${b.efternamn}`;
 const hitta = id => S.bokningar.find(b => b.id === id);
 const detaljer = b => `${S.titel}\n${langt(b.datum)}, ${hhmm(b.start)}–${hhmm(b.start + b.min)}\nAdress: ${b.adress}` +
@@ -336,7 +349,10 @@ function vyKalender() {
 
 function vyInstallningar() {
   const ordning = [1, 2, 3, 4, 5, 6, 0];
+  const krock = utanforSchema();
   return app("installningar", `<h1>Bokningsschema</h1><p class="sub">Inställningarna som styr bokningssidan. Ändringar syns direkt i kundvyn.</p>
+    ${krock.length ? `<div class="warnbox" role="status"><b>${krock.length === 1 ? "En bokning ligger" : krock.length + " bokningar ligger"} utanför det nya schemat.</b> Google varnar inte och bokningarna ligger kvar.
+      Flytta eller ta bort dem i veckovyn:<br>${krock.map(b => `${esc(kort(b.datum))} ${hhmm(b.start)}–${hhmm(b.start + b.min)}, ${esc(namn(b))}`).join("<br>")}</div>` : ""}
     <div class="settings">
       <div class="set"><b>Titel</b><input value="${esc(S.titel)}" data-set="titel" aria-label="Titel"></div>
       <div class="set"><b>Bokningens längd</b><select data-set="min" aria-label="Bokningens längd">${[60, 90, 120, 150, 180].map(m => `<option value="${m}" ${S.min === m ? "selected" : ""}>${langd(m)}</option>`).join("")}</select></div>
@@ -369,7 +385,8 @@ function vyInkorg() {
       const b = hitta(m.bokning);
       return `<div class="mail"><div class="hd"><span>Från: Google Kalender · Till: ${esc(m.till)}</span><span>${new Date(m.tid).toLocaleString("sv-SE", { dateStyle: "short", timeStyle: "short" })}</span></div>
       <h3>${esc(m.amne)}</h3><pre>${esc(m.text)}</pre>
-      ${m.typ === "inbjudan" && b ? `<div class="rsvp">Delta? <button class="btn sec">Ja</button><button class="btn sec">Kanske</button><button class="btn no" data-act="kundnej" data-id="${b.id}">Nej (avbokar)</button></div>` : ""}</div>`;
+      ${m.typ === "inbjudan" && b ? `<div class="rsvp">Delta? ${["Ja", "Kanske"].map(x => `<button class="btn ${b.svar === x ? "" : "sec"}" data-act="svar" data-id="${b.id}" data-s="${x}" aria-pressed="${b.svar === x}">${x}</button>`).join("")}<button class="btn no" data-act="kundnej" data-id="${b.id}">Nej (avbokar)</button>
+        ${b.svar ? `<span class="sub" style="margin:0">Du svarade ${b.svar}. Bokningen gäller oavsett.</span>` : ""}</div>` : ""}</div>`;
     }).join("") || `<p class="sub">Inga mejl ännu. Boka en tid i kundvyn.</p>`}`);
 }
 
@@ -407,9 +424,10 @@ document.addEventListener("click", e => {
   else if (act === "valjev") V.valt = id;
   else if (act === "fotoavboka") { avboka(id, "foto"); V.valt = null; }
   else if (act === "kundnej") avboka(id, "kund");
+  else if (act === "svar") { hitta(id).svar = el.dataset.s; spara(); toast(`Svaret ${el.dataset.s} skickas till Bildfabriken. Tiden är bokad oavsett.`); }
   else if (act === "mejlflik") { e.preventDefault(); V.mejlflik = el.dataset.f; }
   else if (act === "stangtelefon") { $("#phone").hidden = true; return; }
-  else if (act === "aterstall") { try { localStorage.removeItem(KEY); } catch {} S = ladda(); $("#phone").hidden = true; toast("Demodata återställd."); }
+  else if (act === "aterstall") { try { localStorage.removeItem(KEY); } catch {} S = ladda(); V.vecka = forstaLedigaVecka(); $("#phone").hidden = true; toast("Demodata återställd."); }
   render();
 });
 
