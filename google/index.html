@@ -34,7 +34,7 @@ label.f > span { display: block; font-size: 12px; color: var(--muted); margin-bo
 .demobar { background: #202124; color: #fff; padding: 8px 16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 13px; }
 .demobar b { font-family: var(--mono); letter-spacing: .05em; }
 .demobar nav { display: flex; gap: 6px; flex-wrap: wrap; }
-.demobar a, .demobar button { color: #fff; text-decoration: none; padding: 5px 10px; border: 1px solid #555; border-radius: 4px; background: none; cursor: pointer; font-size: 13px; }
+.demobar a, .demobar button { display: inline-flex; align-items: center; min-height: 44px; color: #fff; text-decoration: none; padding: 5px 10px; border: 1px solid #555; border-radius: 4px; background: none; cursor: pointer; font-size: 13px; }
 .demobar a.on { background: #fff; color: #202124; }
 
 /* kund: bokningssida */
@@ -48,14 +48,14 @@ label.f > span { display: block; font-size: 12px; color: var(--muted); margin-bo
 .right { padding: 24px 28px; }
 .wkhead { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .wkhead h2 { font-size: 20px; }
-.wkhead button { border: 0; background: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; color: var(--muted); }
+.wkhead button { border: 0; background: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 18px; color: var(--muted); }
 .wkhead button:hover { background: var(--soft); }
 .wkhead button:disabled { opacity: .3; cursor: default; }
 .week { display: grid; grid-template-columns: repeat(7, minmax(84px, 1fr)); gap: 8px; overflow-x: auto; }
 .col .dh { text-align: center; margin-bottom: 10px; }
 .col .dh small { display: block; font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 500; }
 .col .dh b { font-size: 22px; font-weight: 400; color: var(--ink); }
-.col button { display: block; width: 100%; margin-bottom: 8px; padding: 8px 4px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--blue); font-weight: 500; cursor: pointer; }
+.col button { display: block; width: 100%; min-height: 44px; margin-bottom: 8px; padding: 8px 4px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--blue); font-weight: 500; cursor: pointer; }
 .col button:hover { background: var(--bluebg); border-color: var(--blue); }
 .col .none { font-size: 12px; color: var(--muted); text-align: center; }
 

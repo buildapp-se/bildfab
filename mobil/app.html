@@ -40,7 +40,7 @@ main { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
 .pk button span { font-family: var(--mono); font-size: 13px; }
 .pk button.on { border: 2px solid var(--ink); padding: 11px 13px; }
 .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--soft); border-radius: 12px; padding: 4px; margin-bottom: 10px; }
-.seg button { border: 0; background: none; border-radius: 9px; padding: 9px; font-weight: 500; }
+.seg button { border: 0; background: none; border-radius: 9px; min-height: 44px; padding: 9px; font-weight: 500; }
 .seg button.on { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); font-weight: 700; }
 .hint a { color: var(--ink); }
 .hint { font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
@@ -210,6 +210,9 @@ function push(rubrik, text, vid) {
 
 // ---------- MÄKLARE ----------
 const M = { flik: "boka", kund: "maklare", paket: "villa", adress: "", restid: null, datum: null, tid: null, redigera: false, installera: true };
+// Utkast: påbörjade val överlever omladdning. Profilen sparas för sig.
+const UTKAST = KEY + "-utkast";
+try { Object.assign(M, JSON.parse(localStorage.getItem(UTKAST))); } catch {}
 let profil = (() => { try { return JSON.parse(localStorage.getItem(KEY + "-profil")) || null; } catch { return null; } })();
 const sparaProfil = () => { try { localStorage.setItem(KEY + "-profil", JSON.stringify(profil)); } catch {} };
 
@@ -234,6 +237,7 @@ function makDelar() {
   $("#tider").innerHTML = tider.length ? tider.map(t => `<button data-tid="${t}" class="${t === M.tid ? "on" : ""}">${hhmm(t)}</button>`).join("") : `<p class="none">Inga lediga tider. Välj en annan dag.</p>`;
   $("#tidrubrik").textContent = M.datum ? `Tid · ${lang(M.datum)}` : "Tid";
   const klar = M.adress && M.datum && M.tid != null && profil;
+  try { localStorage.setItem(UTKAST, JSON.stringify({ kund: M.kund, paket: M.paket, adress: M.adress, restid: M.restid, datum: M.datum, tid: M.tid })); } catch {}
   $("#skicka").disabled = !klar;
   $("#skicka").textContent = klar ? `Skicka förfrågan · ${fmtMin(p.min + (M.restid ? M.restid.min * 2 : 0))}`
     : !M.adress ? "Fyll i adressen" : M.tid == null ? "Välj dag och tid" : "Fyll i dina uppgifter (steg 5)";

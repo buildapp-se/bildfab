@@ -15,7 +15,7 @@ body { margin: 0; background: var(--soft); color: var(--text); font: 15px/1.55 v
 header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px clamp(16px, 3vw, 40px); background: #fff; border-bottom: 1px solid var(--line); }
 header h1 { font: 700 18px var(--mono); color: var(--ink); margin: 0; }
 header nav { display: flex; gap: 8px; flex-wrap: wrap; }
-header a, header button { font: 13px var(--mono); color: var(--ink); text-decoration: none; border: 1px solid var(--ink); background: #fff; padding: 7px 12px; cursor: pointer; }
+header a, header button { display: inline-flex; align-items: center; min-height: 44px; font: 13px var(--mono); color: var(--ink); text-decoration: none; border: 1px solid var(--ink); background: #fff; padding: 7px 12px; cursor: pointer; }
 .stage { display: flex; gap: clamp(16px, 4vw, 56px); justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
 figure { margin: 0; text-align: center; }
 figcaption { font: 700 14px var(--mono); color: var(--ink); margin-bottom: 10px; }
@@ -81,7 +81,7 @@ let app = "";
 const ladda = () => { f1.srcdoc = f2.srcdoc = app; };
 fetch("app.html").then(r => r.text()).then(html => { app = html.replace("<head>", `<head><base href="${new URL("app.html", location.href)}">`); ladda(); });
 reset.onclick = () => {
-  try { localStorage.removeItem("bildfab-mobil-demo"); localStorage.removeItem("bildfab-mobil-demo-profil"); } catch {}
+  try { localStorage.removeItem("bildfab-mobil-demo"); localStorage.removeItem("bildfab-mobil-demo-profil"); localStorage.removeItem("bildfab-mobil-demo-utkast"); } catch {}
   ladda();
 };
 </script>
