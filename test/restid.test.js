@@ -12,17 +12,19 @@ const KALLA = fs.readFileSync(path.join(__dirname, "..", "restid.js"), "utf8");
 // (som får returnera ett löfte, för att hålla inne ett svar) när flera uppslag pågår samtidigt. Anropade URL:er hamnar i urls.
 function ladda(svar = []) {
   const urls = [], timers = [];
-  const fetch = async (url) => {
-    urls.push(url);
+  const signaler = [];
+  const fetch = async (url, opt) => {
+    urls.push(url); signaler.push(opt?.signal);
     const s = await (typeof svar === "function" ? svar(url) : svar.shift());
     if (!s) throw new Error("oväntat anrop: " + url);
-    return { ok: s.ok ?? true, json: async () => s.body };
+    if (s.natfel) throw new TypeError("Failed to fetch");
+    return { ok: s.ok ?? true, json: async () => { if (s.trasig) throw new SyntaxError("Unexpected token <"); return s.body; } };
   };
   const setTimeout = (fn, ms) => { const t = { fn, ms, stoppad: false }; timers.push(t); return t; };
   const clearTimeout = (t) => { if (t) t.stoppad = true; };
   const api = new Function("fetch", "setTimeout", "clearTimeout",
     KALLA + "\nreturn { KONTOR, restidCache, restid, restidText, kopplaRestid };")(fetch, setTimeout, clearTimeout);
-  return { ...api, urls, timers, svar };
+  return { ...api, urls, timers, svar, signaler };
 }
 
 const PLATS = [{ lat: "63.83", lon: "20.26", display_name: "Storgatan 22, Umeå" }];
@@ -66,6 +68,26 @@ test("restid: tydliga fel för varje sätt det kan gå fel", async () => {
   await assert.rejects(ladda([{ body: PLATS }, { body: { code: "NoRoute", routes: [] } }]).restid("Storgatan 22"), { message: "Hittar ingen bilväg" });
   await assert.rejects(ladda([{ body: PLATS }, { body: { code: "NoRoute", routes: [{ duration: 1, distance: 1 }] } }]).restid("Storgatan 22"), { message: "Hittar ingen bilväg" });
   await assert.rejects(ladda([{ body: PLATS }, { body: { code: "Ok", routes: [] } }]).restid("Storgatan 22"), { message: "Hittar ingen bilväg" });
+});
+
+// Nätfel gav "Failed to fetch" på engelska i gränssnittet, och ett svar som aldrig kom lät "Räknar ..." stå kvar.
+test("restid: nätfel och trasigt svar blir svenska fel, varje anrop har tidsgräns", async () => {
+  await assert.rejects(ladda([{ natfel: true }]).restid("Storgatan 22"), { message: "Adresstjänsten svarar inte" });
+  await assert.rejects(ladda([{ trasig: true }]).restid("Storgatan 22"), { message: "Adresstjänsten svarar inte" });
+  await assert.rejects(ladda([{ body: PLATS }, { natfel: true }]).restid("Storgatan 22"), { message: "Vägtjänsten svarar inte" });
+  const r = ladda(lyckat());
+  await r.restid("Storgatan 22");
+  assert.equal(r.signaler.length, 2);
+  assert.ok(r.signaler.every(s => s instanceof AbortSignal), "båda anropen ska ha en AbortSignal");
+});
+
+test("kopplaRestid: tjänst nere ger inget ortstips", async () => {
+  const r = ladda([{ natfel: true }]);
+  const f = falt(r);
+  f.skriv("Storgatan 22");
+  await f.tick();
+  assert.equal(f.ut.textContent, "🚗 Restid: Adresstjänsten svarar inte. Försök igen om en stund.");
+  assert.deepEqual(f.klara, [null]);
 });
 
 test("restidText: decimalkomma, en decimal, tur och retur dubblad", () => {

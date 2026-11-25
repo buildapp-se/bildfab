@@ -4,17 +4,20 @@
 const KONTOR = { namn: "Brogatan 5, Umeå", lat: 63.8275765, lon: 20.2507526 };
 const restidCache = {};
 
+// Felsvar, nätfel ("Failed to fetch") och svar som dröjer över 10 s blir samma svenska fel.
+const hamta = (url, fel) => fetch(url, { signal: AbortSignal.timeout(10000) })
+  .then(r => { if (!r.ok) throw 0; return r.json(); })
+  .catch(() => { throw new Error(fel); });
+
 // Lyckas med { min, km, plats } eller kastar Error. min = enkel väg i minuter.
 async function restid(adress) {
   const nyckel = adress.trim().toLowerCase();
   if (restidCache[nyckel]) return restidCache[nyckel];
   // viewbox föredrar träffar i Västerbotten när ort saknas, men utesluter inte resten av Sverige
-  const g = await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=se&viewbox=17,66,22,63&q=" + encodeURIComponent(adress))
-    .then(r => { if (!r.ok) throw new Error("Adresstjänsten svarar inte"); return r.json(); });
+  const g = await hamta("https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=se&viewbox=17,66,22,63&q=" + encodeURIComponent(adress), "Adresstjänsten svarar inte");
   if (!g.length) throw new Error("Hittar inte adressen");
   const { lat, lon, display_name } = g[0];
-  const r = await fetch(`https://router.project-osrm.org/route/v1/driving/${KONTOR.lon},${KONTOR.lat};${lon},${lat}?overview=false`)
-    .then(r => { if (!r.ok) throw new Error("Vägtjänsten svarar inte"); return r.json(); });
+  const r = await hamta(`https://router.project-osrm.org/route/v1/driving/${KONTOR.lon},${KONTOR.lat};${lon},${lat}?overview=false`, "Vägtjänsten svarar inte");
   if (r.code !== "Ok" || !r.routes.length) throw new Error("Hittar ingen bilväg");
   return (restidCache[nyckel] = { min: Math.round(r.routes[0].duration / 60), km: r.routes[0].distance / 1000, plats: display_name });
 }
@@ -41,7 +44,8 @@ function kopplaRestid(input, ut, klar, notis = "") {
         klar(r);
       } catch (e) {
         if (senaste !== adress) return;
-        ut.textContent = `🚗 Restid: ${e.message}. Lägg till ort, t.ex. "Storgatan 22, Umeå".`;
+        // Ortstipset hjälper bara när adressen inte hittas, inte när en tjänst är nere.
+        ut.textContent = `🚗 Restid: ${e.message}. ${e.message === "Hittar inte adressen" ? 'Lägg till ort, t.ex. "Storgatan 22, Umeå".' : "Försök igen om en stund."}`;
         klar(null);
       }
     }, 900);
