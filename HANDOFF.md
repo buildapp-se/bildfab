@@ -1,5 +1,5 @@
 ---
-reviewedAt: 2026-11-24
+reviewedAt: 2026-11-25
 ---
 # Handoff
 
@@ -36,3 +36,5 @@ Verifierat lokalt i Chromium: axe-core färgkontrast och scrollable-region-focus
 **2026-11-04, mutationstest** (grenen `claude/mutation-2026-11-04`, PR #2, mergad 2026-11-04). Audit-kolumnen Mutation på `restid.js` med Stryker 10.1.1. Ny `test/restid.test.js` (node:test, låtsad fetch och timers, 14 tester). Poäng 0 % före (inga tester), 98,51 % efter; den överlevande är ekvivalent. Ingen produktionskod ändrad. Testet för kortad adress (rättat i PR #1) var todo och är ett vanligt test sedan mergen.
 
 **2026-11-24, buggjakt 2** (worktree `C:\dev\_wt\bildfab-1124k`, grenen `hunt2/2026-11-24`): sidorna och flödena som första buggjakten inte gick igenom (google, cal, mobil, startsidan, tomma lägen, okända id, nätfel, andra besöket med sparad data). Åtta fel rättade, se BACKLOG "buggjakt 2". Inga tjänstearbetare finns, så inget cacheproblem att pröva. Mutationstestet är inte omkört efter ändringen i `restid.js` (98,51 % gäller koden före).
+
+**2026-11-25, fart, tillgänglighet och metadata** (worktree `C:\dev\_wtbildfab-1125s`, borttagen efter push, grenen `speed/2026-11-25`, pushad till main som `851e34d`, live verifierad, klar): se BACKLOG "Rättat 2026-11-25". Mätskripten (Playwright och axe-core 4.14.0 från aifabriken) ligger utanför repot. Kvar: CLS 0,229 på mobil/ i 390 px, smakfråga i BACKLOG P3. Fetstil visar nu typsnittets riktiga vikt 700; tidigare laddades bara 400 och 500, så webbläsaren gjorde fetstilen själv.

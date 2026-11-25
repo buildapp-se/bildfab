@@ -7,6 +7,16 @@ Från granskningen 2026-10-28. P1 rättat samma dag.
 - mobil: restid räknas via kontoret, inte mellan jobb. Medvetet tak (`ponytail:` i `mobil/app.html`): mellan jobb kräver ett OSRM-anrop per granne och dag mot en demotjänst med 1 anrop/s. Görs i Worker-bygget, inte i demon.
 - Google- och Cal-demon är återskapade efter hjälpsidor, inte jämförda med riktiga konton. Skärmdumpar från ett riktigt konto skulle bekräfta utseendet.
 
+- mobil/ i 390 px: CLS 0,229 (före och efter 2026-11-25). Länkarna i sidhuvudet radbryts från två till tre rader när Roboto Mono ersätter reservtypsnittet (Consolas i Chromium på Windows). Mätt bara i Chromium på Windows; i telefoner är reservtypsnittet ett annat och skiftet är inte mätt. Val: `font-display: optional` (inget skift, men reservtypsnitt vid första besöket på långsamt nät) eller reserverad höjd på raden. Smakfråga, lämnad.
+
+## Rättat 2026-11-25, fart, tillgänglighet och metadata (grenen `speed/2026-11-25`, `851e34d`)
+Playwright live i 390 px (4x CPU, Slow 4G) och 1440 px, före och efter deploy.
+- mvp: bilderna var 2,9 MB jpg (upp till 3000 px breda för 231 till 356 px stora kort). Nu WebP, 157 KB för korten och den smala heron, width/height, lazy på kort 2 och 3, hero med preload. 390 px: LCP 13 576 ms till 2 780 ms, 3 018 KB till 265 KB.
+- Typsnitten från Google Fonts blockerade renderingen (1 begäran per sida). Nu egna filer med preload, 0 blockerande. Startsidan i 390 px: CLS 0,14 till 0.
+- mobil/app.html: rubrikraden och flikraden fylls av skriptet efter första målningen och flyttade innehållet. Nu reserverad höjd, CLS i 390 px 0,069 till 0,004 (lokalt, mätt efter typsnittsbytet).
+- axe: heading-order (startsidan, mvp, app.html) och region (mvp hero och skissrad, app.html sidhuvud) 0 fynd. Kortrubriker och stegrubriker är h2 med samma utseende.
+- Alla sidor: meta description, og:title, og:description, og:image och favicon (loggan). Ingen canonical (noindex), inget manifest (ingen PWA).
+
 ## Rättat 2026-11-24, buggjakt 2 (grenen `hunt2/2026-11-24`)
 Playwright-skript lokalt: alla 24 vyer i 390 och 1440 px (inga JS-fel, trasiga bilder eller punkt som decimaltecken), plus 10 flödeskontroller, alla gröna efter (4 av dem kördes före rättningen och föll). Restidstesterna 16 av 16; de 2 nya faller på gammal kod.
 - restid, alla sidor: nätfel visade "Restid: Failed to fetch" på engelska och ett svar som aldrig kom lät "Räknar restid ..." stå kvar. Nu svenskt fel och 10 s tidsgräns; ortstipset visas bara när adressen inte hittas, annars "Försök igen om en stund."
