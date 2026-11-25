@@ -157,6 +157,7 @@ const lang = s => fromIso(s).toLocaleDateString("sv-SE", { weekday: "long", day:
 const paket = id => PAKET.find(p => p.id === id);
 const resa = b => b.restid?.min ?? STANDARD_RESA;
 const VD = ["sön", "mån", "tis", "ons", "tor", "fre", "lör"];
+const DAGNAMN = ["söndag", "måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag"];
 const logga = `<img src="../mvp/assets/Bildfabriken-logo.png" alt="">`;
 
 function vardag(n) { const d = new Date(); d.setHours(0, 0, 0, 0); for (let k = 0; k < n;) { d.setDate(d.getDate() + 1); if (d.getDay() % 6) k++; } return iso(d); }
@@ -243,7 +244,7 @@ function makDelar() {
     : !M.adress ? "Fyll i adressen" : M.tid == null ? "Välj dag och tid" : "Fyll i dina uppgifter (steg 5)";
 }
 function makProfilHtml() {
-  if (profil && !M.redigera) return `<div class="me"><div><b>${esc(profil.namn)}</b><br><small>${esc(profil.firma)} · ${esc(profil.telefon)}</small></div><button data-act="redigera">Ändra</button></div>`;
+  if (profil && !M.redigera) return `<div class="me"><div><b>${esc(profil.namn)}</b><br><small>${profil.firma ? esc(profil.firma) + " · " : ""}${esc(profil.telefon)}</small></div><button data-act="redigera">Ändra</button></div>`;
   const p = profil || {};
   return `<form id="profilform" class="grid2">
     <input name="namn" placeholder="Ditt namn" value="${esc(p.namn)}" autocomplete="name" required>
@@ -303,7 +304,7 @@ function fotForfragningar() {
     <h2>${esc(paket(b.paket).namn)}</h2>
     <p><b>${esc(lang(b.datum))} · ${hhmm(b.start)}–${hhmm(b.start + b.min)}</b></p>
     <p>📍 <a href="${kartlank(b.adress)}" target="_blank" rel="noopener">${esc(b.adress)}</a></p>
-    <p>👤 ${esc(b.namn)}, ${esc(b.firma)} · <a href="tel:${esc(b.telefon)}">${esc(b.telefon)}</a></p>
+    <p>👤 ${esc(b.namn)}${b.firma ? ", " + esc(b.firma) : ""} · <a href="tel:${esc(b.telefon.replace(/\s/g, ""))}">${esc(b.telefon)}</a></p>
     ${totHtml(b)}
     ${F.avbojer === b.id ? `<div class="reasons">${["Fullt den dagen", "För långt bort", "Går det dagen efter?", "Ring mig"].map(r => `<button data-nejorsak="${b.id}" data-orsak="${r}">${r}</button>`).join("")}</div>`
       : `<div class="yn"><button class="nej" data-nej="${b.id}">Nej</button><button class="ja" data-ja="${b.id}">Ja</button></div>`}
@@ -316,15 +317,15 @@ function fotKalender() {
   $("#main").innerHTML = Object.keys(perDag).length ? Object.entries(perDag).map(([d, lista]) => {
     const total = lista.reduce((s, b) => s + b.min + resa(b) * 2, 0);
     return `<div class="day"><div><h3>${esc(lang(d))}</h3><span class="dt">${fmtMin(total)} inkl. resor</span></div>
-      ${lista.map(b => `<div class="job"><span class="t">${hhmm(b.start)}</span><div><b>${esc(paket(b.paket).namn)}</b> · ${esc(b.firma)}
+      ${lista.map(b => `<div class="job"><span class="t">${hhmm(b.start)}</span><div><b>${esc(paket(b.paket).namn)}</b>${b.firma ? " · " + esc(b.firma) : ""}
         <p>📍 <a href="${kartlank(b.adress)}" target="_blank" rel="noopener">${esc(b.adress)}</a>${b.restid ? ` · 🚗 ${b.restid.min} min` : ""}</p>
-        <p>👤 ${esc(b.namn)} · <a href="tel:${esc(b.telefon)}">${esc(b.telefon)}</a></p></div></div>`).join("")}</div>`;
+        <p>👤 ${esc(b.namn)} · <a href="tel:${esc(b.telefon.replace(/\s/g, ""))}">${esc(b.telefon)}</a></p></div></div>`).join("")}</div>`;
   }).join("") : `<p class="none">Inga bekräftade jobb framåt.</p>`;
 }
 function fotTider() {
   $("#main").innerHTML = `<div class="sched">${[1, 2, 3, 4, 5, 6, 0].map(d => { const s = S.schema[d]; return `<div class="d">
-    <div><b>${VD[d]}dag</b><br>${s.pa ? `<input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till">` : `<small class="none">Ledig</small>`}</div>
-    <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VD[d]}dag"><span></span></label></div>`; }).join("")}</div>
+    <div><b>${DAGNAMN[d]}</b><br>${s.pa ? `<input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran" aria-label="${DAGNAMN[d]} från"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till" aria-label="${DAGNAMN[d]} till">` : `<small class="none">Ledig</small>`}</div>
+    <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${DAGNAMN[d]}"><span></span></label></div>`; }).join("")}</div>
     <div class="sec" style="margin-top:24px"><h3>Lediga dagar</h3>
       <form id="ledigform" class="grid2" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end">
         <label><small>Från</small><input type="date" name="fran" min="${iso(new Date())}" required></label>
@@ -372,11 +373,11 @@ document.addEventListener("click", e => {
     push("Förfrågan skickad", `${p.namn}, ${kort(b.datum)} ${hhmm(b.start)}. Tiden är reserverad tills fotografen svarar.`);
     return;
   }
-  if (d.avboka) { S = ladda(); const b = hitta(d.avboka); if (b) { b.status = "cancelled"; b.orsak = "Avbokad av dig"; spara(); render(); } return; }
-  if (d.ja) { S = ladda(); const b = hitta(d.ja); if (b) { b.status = "accepted"; spara(); render(); } return; }
+  if (d.avboka) { S = ladda(); const b = hitta(d.avboka); if (["pending", "accepted"].includes(b?.status)) { b.status = "cancelled"; b.orsak = "Avbokad av dig"; spara(); } render(); return; }
+  if (d.ja) { S = ladda(); const b = hitta(d.ja); if (b?.status === "pending") { b.status = "accepted"; spara(); } render(); return; }
   if (d.nej) { F.avbojer = d.nej; render(); return; }
   if (d.ledigbort) { S = ladda(); S.ledigt.splice(Number(d.ledigbort), 1); spara(); render(); return; }
-  if (d.nejorsak) { S = ladda(); const b = hitta(d.nejorsak); if (b) { b.status = "rejected"; b.orsak = d.orsak; spara(); } F.avbojer = null; render(); return; }
+  if (d.nejorsak) { S = ladda(); const b = hitta(d.nejorsak); if (b?.status === "pending") { b.status = "rejected"; b.orsak = d.orsak; spara(); } F.avbojer = null; render(); return; }
 });
 
 document.addEventListener("submit", e => {
@@ -398,7 +399,7 @@ document.addEventListener("change", e => {
   S = ladda();
   const dag = S.schema[el.dataset.sched];
   if (el.dataset.k === "pa") dag.pa = el.checked; else if (el.value) dag[el.dataset.k] = el.value;
-  if (minuter(dag.till) <= minuter(dag.fran)) dag.till = hhmm(minuter(dag.fran) + 60);
+  if (minuter(dag.till) <= minuter(dag.fran)) dag.till = hhmm(Math.min(minuter(dag.fran) + 60, 1439));
   spara(); render();
 });
 

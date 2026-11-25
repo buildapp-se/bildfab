@@ -159,7 +159,9 @@ label.f > span { display: block; margin-bottom: 5px; }
   .booker, .booker.form { grid-template-columns: 1fr; }
   .b-info { border-right: 0; border-bottom: 1px solid var(--line); }
   .b-slots { border-left: 0; border-top: 1px solid var(--line); }
-  .admin { grid-template-columns: 1fr; align-content: start; }
+  .admin { grid-template-columns: minmax(0, 1fr); align-content: start; }
+  .sched .d { grid-template-columns: 44px 1fr; }
+  .sched .times, .sched .off { grid-column: 2; }
   .side { display: flex; gap: 4px; overflow-x: auto; padding: 10px; border-right: 0; border-bottom: 1px solid var(--line); }
   .side .me { display: none; }
   .side a { flex: none; align-items: center; gap: 8px; min-height: 44px; white-space: nowrap; margin-bottom: 0; }
@@ -214,6 +216,7 @@ const langd = m => m % 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m / 60}
 const typ = id => TYPER.find(t => t.id === id);
 const tidsspann = b => `${hhmm(b.start)}–${hhmm(b.start + typ(b.typ).min)}`;
 const VECKODAGAR = ["sön", "mån", "tis", "ons", "tor", "fre", "lör"];
+const DAGNAMN = ["söndag", "måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag"];
 
 function vardag(n) {
   const d = new Date(); d.setHours(0, 0, 0, 0);
@@ -519,9 +522,9 @@ function vyTillganglighet() {
     <div class="sched">${ordning.map(d => {
       const s = S.schema[d];
       return `<div class="d">
-        <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${VECKODAGAR[d]}dag"><span></span></label>
-        <b style="text-transform:capitalize">${VECKODAGAR[d]}dag</b>
-        ${s.pa ? `<div class="times"><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran" aria-label="${VECKODAGAR[d]}dag från"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till" aria-label="${VECKODAGAR[d]}dag till"></div>` : `<span class="off">Otillgänglig</span>`}
+        <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${DAGNAMN[d]}"><span></span></label>
+        <b style="text-transform:capitalize">${DAGNAMN[d]}</b>
+        ${s.pa ? `<div class="times"><input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran" aria-label="${DAGNAMN[d]} från"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till" aria-label="${DAGNAMN[d]} till"></div>` : `<span class="off">Otillgänglig</span>`}
       </div>`;
     }).join("")}</div>
     <div class="overrides">
@@ -619,7 +622,7 @@ document.addEventListener("change", e => {
   const dag = S.schema[el.dataset.sched];
   if (el.dataset.k === "pa") dag.pa = el.checked;
   else if (el.value) dag[el.dataset.k] = el.value;
-  if (minuter(dag.till) <= minuter(dag.fran)) { toast("Sluttiden måste vara efter starttiden."); dag.till = hhmm(minuter(dag.fran) + 60); }
+  if (minuter(dag.till) <= minuter(dag.fran)) { toast("Sluttiden måste vara efter starttiden."); dag.till = hhmm(Math.min(minuter(dag.fran) + 60, 1439)); }
   spara(); render(); toast("Sparat.");
 });
 

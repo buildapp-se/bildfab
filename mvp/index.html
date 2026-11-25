@@ -449,7 +449,7 @@ function uppdateraRestid() {
     } catch (e) {
       if (restidFraga !== adress) return;
       aktuellRestid = null;
-      $("#restid").textContent = `🚗 Restid: ${e.message}. Kontrollera adressen.`;
+      $("#restid").textContent = `🚗 Restid: ${e.message}. ${e.message === "Hittar inte adressen" ? "Kontrollera adressen." : "Försök igen om en stund."}`;
     }
     ritaSammanfattning();
   }, 900);
@@ -580,8 +580,9 @@ form.addEventListener("submit", e => {
   // Enter i ett fält före sista steget betyder Nästa, inte skicka (som visade kontaktstegets fel).
   if (steg < 3) return $("#fwd").click();
   const o = lasForm();
-  const fel = validera(3, o);
-  if (fel) { $("#err").textContent = fel; return; }
+  // Alla steg, inte bara kontakt: ett utkast vars datum har passerat öppnar på steg 4 utan datum.
+  const fel = [0, 1, 2, 3].map(n => [n, validera(n, o)]).find(([, f]) => f);
+  if (fel) { if (fel[0] !== steg) { steg = fel[0]; visaSteg(); } $("#err").textContent = fel[1]; return; }
   const alla = laddaBokningar();
   const nr = Math.max(1040, ...alla.map(b => Number(b.ref.split("-")[1]) || 0)) + 1;
   delete o.gdpr;

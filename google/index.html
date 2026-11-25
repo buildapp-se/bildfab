@@ -453,11 +453,11 @@ document.addEventListener("submit", e => {
 
 document.addEventListener("change", e => {
   const el = e.target;
-  if (el.dataset.set) S[el.dataset.set] = el.dataset.set === "titel" ? el.value : Number(el.value);
+  if (el.dataset.set) S[el.dataset.set] = el.dataset.set === "titel" ? el.value.trim() || S.titel : Number(el.value);
   else if (el.dataset.sched) {
     const dag = S.schema[el.dataset.sched];
     if (el.dataset.k === "pa") dag.pa = el.checked; else if (el.value) dag[el.dataset.k] = el.value;
-    if (minuter(dag.till) <= minuter(dag.fran)) dag.till = hhmm(minuter(dag.fran) + 60);
+    if (minuter(dag.till) <= minuter(dag.fran)) dag.till = hhmm(Math.min(minuter(dag.fran) + 60, 1439));
   } else return;
   spara(); render(); toast("Sparat.");
 });
