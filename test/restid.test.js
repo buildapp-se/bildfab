@@ -99,7 +99,7 @@ test("restidText: decimalkomma, en decimal, tur och retur dubblad", () => {
 // Ett låtsat adressfält: skriv(text) sätter värdet och skickar input-händelsen.
 function falt(r, notis) {
   let lyssnare;
-  const input = { value: "", addEventListener: (typ, fn) => { assert.equal(typ, "input"); lyssnare = fn; } };
+  const input = { value: "", isConnected: true, addEventListener: (typ, fn) => { assert.equal(typ, "input"); lyssnare = fn; } };
   const ut = { textContent: "x" };
   const klara = [];
   if (notis === undefined) r.kopplaRestid(input, ut, (v) => klara.push(v));
@@ -216,4 +216,16 @@ test("kopplaRestid: svar på väg skriver inte över en kortad adress", async ()
   await p;
   assert.equal(f.ut.textContent, "");
   assert.deepEqual(f.klara, [null]);
+});
+
+// Scenariojakt 2026-11-25: mäklaren byter flik i mobil medan restiden räknas. Fältet är borta ur sidan
+// när svaret kommer, och klar() ritade då om delar som inte finns (TypeError).
+test("kopplaRestid: svar som kommer när fältet tagits bort ur sidan ignoreras", async () => {
+  const r = ladda(lyckat());
+  const f = falt(r);
+  f.skriv("Storgatan 22");
+  const p = f.tick();
+  f.input.isConnected = false;
+  await p;
+  assert.deepEqual(f.klara, []);
 });

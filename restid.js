@@ -25,6 +25,7 @@ async function restid(adress) {
 const restidText = r => `${r.min} min enkel väg, ${(r.km).toFixed(1).replace(".", ",")} km (tur och retur ${r.min * 2} min)`;
 
 // Kopplar ett adressfält till en rad som visar restiden. Väntar tills användaren slutat skriva (Nominatim tillåter 1 anrop/s).
+// Svar som kommer efter att fältet tagits bort ur sidan (annan vy) ignoreras.
 // notis: text efter restiden, t.ex. för att märka att tjänsten inte klarar det själv.
 function kopplaRestid(input, ut, klar, notis = "") {
   let timer, senaste = "";
@@ -39,11 +40,11 @@ function kopplaRestid(input, ut, klar, notis = "") {
       ut.textContent = "🚗 Räknar restid från kontoret ...";
       try {
         const r = await restid(adress);
-        if (senaste !== adress) return;
+        if (senaste !== adress || !input.isConnected) return;
         ut.textContent = `🚗 Från kontoret (${KONTOR.namn}): ${restidText(r)}${notis}`;
         klar(r);
       } catch (e) {
-        if (senaste !== adress) return;
+        if (senaste !== adress || !input.isConnected) return;
         // Ortstipset hjälper bara när adressen inte hittas, inte när en tjänst är nere.
         ut.textContent = `🚗 Restid: ${e.message}. ${e.message === "Hittar inte adressen" ? 'Lägg till ort, t.ex. "Storgatan 22, Umeå".' : "Försök igen om en stund."}`;
         klar(null);
