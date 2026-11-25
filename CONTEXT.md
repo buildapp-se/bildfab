@@ -54,7 +54,7 @@ graph LR
 - Frontend: statisk HTML och vanilla JS, inget bygge
 - Data: demodata i localStorage per webbläsare
 - Restid: `restid.js` mot Nominatim och OSRM:s demoserver, bara för demo
-- Tester: `test/restid.test.js` (node:test) för `restid.js`; sidskripten saknar tester
+- Tester: `test/restid.test.js` (node:test) för `restid.js`; sidskripten saknar tester i repot (scenarioskript i Playwright ligger utanför, se HANDOFF)
 - Hosting: GitHub Pages, `buildapp.se/bildfab/`
 
 ## Audits

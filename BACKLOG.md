@@ -9,6 +9,13 @@ Från granskningen 2026-10-28. P1 rättat samma dag.
 
 - mobil/ i 390 px: CLS 0,229 (före och efter 2026-11-25). Länkarna i sidhuvudet radbryts från två till tre rader när Roboto Mono ersätter reservtypsnittet (Consolas i Chromium på Windows). Mätt bara i Chromium på Windows; i telefoner är reservtypsnittet ett annat och skiftet är inte mätt. Val: `font-display: optional` (inget skift, men reservtypsnitt vid första besöket på långsamt nät) eller reserverad höjd på raden. Smakfråga, lämnad.
 
+## Rättat 2026-11-25, scenariojakt (grenen `scen/2026-11-25`)
+Headless Playwright-scenarier lokalt (skripten utanför repot): två flikar, en vecka med låtsad klocka, uppgradering från fyra äldre byggen med sparad data, 400 bokningar per demo, byte mellan 1440 och 390 px mitt i flöden. Restidstesterna 17 av 17; det nya faller på gammal kod.
+- google, cal: två öppna flikar skrev över varandra. Flik B:s bokning raderade flik A:s, och en bokning i kundfliken gjorde ett godkännande i fotografvyn ogjort. Nu läser sidan om demodatan när en annan flik sparar och ritar om, utom mitt i ett textfält. Före 3 fel, efter 0.
+- mobil: byte till Mina bokningar medan restiden räknades gav `TypeError` i `makDelar` (2 av 4 körningar). Rättat i `restid.js`: svar som kommer när adressfältet lämnat sidan ignoreras, gäller alla sidor. `restid.js?v=2026-11-25`.
+- cal och mobil: återbesök efter en vecka visade Godkänn, Ja/Nej, Avboka, "Tiden är reserverad" och räknarbadgen för förfrågningar vars dag passerat. Nu bara för dagens datum och framåt, som Kommande och Jobb redan gjorde.
+- Utan fynd: uppgradering från `d0b28a8`, `89d518a`, `e6e75dd`, `b51b589` (16 vyer, inga JS-fel); 400 bokningar per demo (1,2 MB localStorage, alla vyer under 300 ms, åtgärder under 100 ms); breddbyte mitt i formulär (värden kvar, ingen sidledsscroll). Inloggning, import och tjänstearbetare finns inte i demon.
+
 ## Rättat 2026-11-25, fart, tillgänglighet och metadata (grenen `speed/2026-11-25`, `851e34d`)
 Playwright live i 390 px (4x CPU, Slow 4G) och 1440 px, före och efter deploy.
 - mvp: bilderna var 2,9 MB jpg (upp till 3000 px breda för 231 till 356 px stora kort). Nu WebP, 157 KB för korten och den smala heron, width/height, lazy på kort 2 och 3, hero med preload. 390 px: LCP 13 576 ms till 2 780 ms, 3 018 KB till 265 KB.
