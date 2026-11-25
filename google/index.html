@@ -421,6 +421,13 @@ function render() {
   $("#d-kund").classList.toggle("on", !foto);
   $("#d-foto").classList.toggle("on", foto);
 }
+// En annan flik ändrade demodatan: läs om, annars skriver nästa sparning över den andra flikens ändring.
+// Rita inte om mitt i ett textfält, då tappas det som skrivs.
+addEventListener("storage", e => {
+  if (e.key !== KEY && e.key !== null) return;
+  S = ladda();
+  if (!document.activeElement?.matches("#app input, #app textarea, #app select")) render();
+});
 addEventListener("hashchange", () => { render(); scrollTo(0, 0); });
 
 document.addEventListener("click", e => {

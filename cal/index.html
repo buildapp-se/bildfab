@@ -577,6 +577,13 @@ function render() {
   document.querySelector("[autofocus]")?.focus();
   if ($("#adress")) { V.restid = null; kopplaRestid($("#adress"), $("#restid"), r => V.restid = r, ". (Demotillägg: kräver en liten egen tjänst kopplad via Cal-webhook.)"); }
 }
+// En annan flik ändrade demodatan: läs om, annars skriver nästa sparning över den andra flikens ändring.
+// Rita inte om mitt i ett textfält, då tappas det som skrivs.
+addEventListener("storage", e => {
+  if (e.key !== KEY && e.key !== null) return;
+  S = ladda();
+  if (!document.activeElement?.matches("#app input, #app textarea, #app select")) render();
+});
 addEventListener("hashchange", () => {
   V.avbokar = false; V.avbojer = null;
   if (!location.hash.startsWith("#/t/")) { V.manad = null; V.datum = null; }
