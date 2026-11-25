@@ -27,6 +27,8 @@ body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(
 h1, h2, h3 { color: var(--ink); margin: 0; line-height: 1.25; }
 a { color: inherit; }
 button, input, select, textarea { font: inherit; color: var(--ink); }
+/* ponytail: Safari på iPhone zoomar in sidan när ett fält under 16 px får fokus. */
+@media (pointer: coarse) { input, select, textarea { font-size: 16px; } }
 input, select, textarea { width: 100%; padding: 9px 11px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
 textarea { min-height: 70px; resize: vertical; }

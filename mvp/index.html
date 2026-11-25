@@ -32,6 +32,8 @@ h2 { font-size: 22px; font-weight: 700; }
 h3, legend h2 { font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
 a { color: var(--ink); }
 button, input, select, textarea { font: inherit; color: var(--ink); }
+/* ponytail: Safari på iPhone zoomar in sidan när ett fält under 16 px får fokus. */
+@media (pointer: coarse) { input, select, textarea { font-size: 16px; } }
 
 /* header */
 header { display: flex; align-items: center; justify-content: space-between; gap: 16px;

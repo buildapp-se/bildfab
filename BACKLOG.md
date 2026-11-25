@@ -9,6 +9,11 @@ Från granskningen 2026-10-28. P1 rättat samma dag.
 
 - mobil/ i 390 px: CLS 0,229 (före och efter 2026-11-25). Länkarna i sidhuvudet radbryts från två till tre rader när Roboto Mono ersätter reservtypsnittet (Consolas i Chromium på Windows). Mätt bara i Chromium på Windows; i telefoner är reservtypsnittet ett annat och skiftet är inte mätt. Val: `font-display: optional` (inget skift, men reservtypsnitt vid första besöket på långsamt nät) eller reserverad höjd på raden. Smakfråga, lämnad.
 
+## Rättat 2026-11-25, webbläsarpass (grenen `xb/2026-11-25`)
+Samma flöden i WebKit (Playwright 1.64.1, webkit-2370, iPhone 13-profil), Firefox (firefox-1555, 1440 px) och Chromium (390 px), lokalt: alla sidor, bokning i google och cal, tidsfält, datumblockering, mvp hela förfrågan med "120,5" i kvm, `.ics`, mobil bokning och Ja, Lediga dagar, två-telefonsidan. Inga JS-fel, ingen sidledsscroll, samma datumtexter (`sv-SE`) och samma sparade data i alla tre. Ingen iPhone provad, bara WebKit på Windows.
+- google, cal, mvp, mobil Mina tider: alla textfält, listor och tidsfält var 14 px. Safari på iPhone zoomar in sidan när ett fält under 16 px får fokus. Nu 16 px på pekskärm (`pointer: coarse`), oförändrat med mus. WebKit-skriptet: 9 vyer med fält under 16 px före, 0 efter. Själva zoomen går inte att visa i WebKit på Windows.
+- mobil/app.html: Skicka-raden ligger fast 64 px från botten, men flikraden växer med `safe-area-inset-bottom` (34 px på iPhone med hemstreck när appen öppnas direkt). Med 34 px insatt täckte raden flikarna med 31 px, nu 0. WebKit på Windows ger 0 px, så värdet byttes in i skriptet.
+
 ## Rättat 2026-11-25, scenariojakt (grenen `scen/2026-11-25`)
 Headless Playwright-scenarier lokalt (skripten utanför repot): två flikar, en vecka med låtsad klocka, uppgradering från fyra äldre byggen med sparad data, 400 bokningar per demo, byte mellan 1440 och 390 px mitt i flöden. Restidstesterna 17 av 17; det nya faller på gammal kod.
 - google, cal: två öppna flikar skrev över varandra. Flik B:s bokning raderade flik A:s, och en bokning i kundfliken gjorde ett godkännande i fotografvyn ogjort. Nu läser sidan om demodatan när en annan flik sparar och ritar om, utom mitt i ett textfält. Före 3 fel, efter 0.
