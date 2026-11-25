@@ -6,8 +6,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>Bildfab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="description" content="Bildfabrikens bokningsapp som demo: välj paket, adress, dag och tid.">
+<meta property="og:title" content="Bildfab">
+<meta property="og:description" content="Bildfabrikens bokningsapp som demo: välj paket, adress, dag och tid.">
+<meta property="og:image" content="https://buildapp.se/bildfab/mvp/assets/og.jpg">
+<link rel="icon" href="../mvp/assets/Bildfabriken-logo.png">
+<link rel="preload" href="../fonts/roboto-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/roboto.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: "Roboto Mono"; src: url(../fonts/roboto-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Roboto"; src: url(../fonts/roboto.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+</style>
 <style>
 :root { --ink: #000; --text: #3d3d3d; --muted: #6b6d7a; --line: #e6e7ea; --soft: #f3f4f6;
   --ok: #1f7a4d; --okbg: #dcf3e6; --pend: #a85a12; --pendbg: #fdf0dc; --no: #c62828; --nobg: #fde2e2;
@@ -20,19 +29,19 @@ button, input { font: inherit; color: var(--ink); }
 input { width: 100%; min-width: 0; padding: 12px; border: 1px solid #cfd2d7; border-radius: 10px; background: #fff; font-size: 16px; }
 input:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
 
-.top { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+.top { min-height: 60px; padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
 .top img { width: 34px; height: 34px; }
 .top h1 { font-size: 17px; }
 .top small { display: block; color: var(--muted); font-size: 12px; font-family: var(--sans); font-weight: 400; }
 main { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
-.tabs { display: flex; border-top: 1px solid var(--line); background: #fff; padding-bottom: env(safe-area-inset-bottom); }
+.tabs { min-height: calc(61px + env(safe-area-inset-bottom, 0px)); display: flex; border-top: 1px solid var(--line); background: #fff; padding-bottom: env(safe-area-inset-bottom); }
 .tabs button { flex: 1; border: 0; background: none; padding: 10px 0 12px; font-size: 11px; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; }
 .tabs button i { font-style: normal; font-size: 20px; line-height: 1; }
 .tabs button.on { color: var(--ink); font-weight: 700; }
 .tabs .n { position: absolute; top: 4px; left: 55%; background: var(--no); color: #fff; border-radius: 9px; font-size: 10px; padding: 1px 6px; font-weight: 700; }
 
 .sec { margin-bottom: 22px; }
-.sec > h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.sec > h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
 .pk { display: grid; gap: 8px; }
 .pk button { display: flex; justify-content: space-between; align-items: center; text-align: left; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
 .pk button b { display: block; color: var(--ink); }
@@ -124,7 +133,7 @@ main { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
 </style>
 </head>
 <body>
-<div class="top" id="top"></div>
+<header class="top" id="top"></header>
 <main id="main"></main>
 <nav class="tabs" id="tabs"></nav>
 <div id="pushyta"></div>
@@ -257,16 +266,16 @@ function makProfilHtml() {
 function makBoka() {
   $("#main").innerHTML = `
     ${M.installera ? `<div class="install">${logga}<div><b>Lägg Bildfab på hemskärmen</b><br>Boka på 20 sekunder och få svar som notis.</div><button data-act="installera">Lägg till</button></div>` : ""}
-    <div class="sec"><h3>1 · Uppdrag</h3>
+    <div class="sec"><h2>1 · Uppdrag</h2>
       <div class="seg">${[["maklare", "Mäklare"], ["arkitekt", "Arkitekt / byrå"]].map(([k, t]) => `<button data-kund="${k}" class="${M.kund === k ? "on" : ""}">${t}</button>`).join("")}</div>
       <div class="pk">${PAKET.filter(p => p.kund === M.kund).map(p => `<button data-paket="${p.id}" class="${p.id === M.paket ? "on" : ""}"><div><b>${p.namn}</b><small>${p.info}</small></div><span>${fmtMin(p.min)}</span></button>`).join("")}</div>
       ${M.kund === "arkitekt" ? `<p class="hint">Osäker på datum, eller ett större uppdrag? <a href="../mvp/index.html" target="_top">Skicka en förfrågan med önskade datum</a> i stället.</p>` : ""}</div>
-    <div class="sec"><h3>2 · Adress</h3><input id="adress" placeholder="Gata och nummer, ort" value="${esc(M.adress)}" autocomplete="street-address">
+    <div class="sec"><h2>2 · Adress</h2><input id="adress" placeholder="Gata och nummer, ort" value="${esc(M.adress)}" autocomplete="street-address">
       <p class="hint" id="restid">${M.restid ? `🚗 ${esc(restidText(M.restid))}` : "Restiden räknas ut från Bildfabs kontor."}</p><div class="tot" id="tot"></div></div>
-    <div class="sec"><h3>3 · Dag</h3><div class="chips" id="dagar"></div></div>
-    <div class="sec"><h3 id="tidrubrik">4 · Tid</h3><div class="slots" id="tider"></div>
+    <div class="sec"><h2>3 · Dag</h2><div class="chips" id="dagar"></div></div>
+    <div class="sec"><h2 id="tidrubrik">4 · Tid</h2><div class="slots" id="tider"></div>
       <p class="hint">Bara tider där fotografen hinner köra dit och hem visas.</p></div>
-    <div class="sec"><h3>5 · Du</h3><div id="profil">${makProfilHtml()}</div></div>
+    <div class="sec"><h2>5 · Du</h2><div id="profil">${makProfilHtml()}</div></div>
     <div class="cta"><button class="btn" id="skicka" data-act="skicka"></button><p class="err" id="err"></p></div>`;
   makDelar();
   kopplaRestid($("#adress"), $("#restid"), r => { M.restid = r; makDelar(); });
@@ -326,7 +335,7 @@ function fotTider() {
   $("#main").innerHTML = `<div class="sched">${[1, 2, 3, 4, 5, 6, 0].map(d => { const s = S.schema[d]; return `<div class="d">
     <div><b>${DAGNAMN[d]}</b><br>${s.pa ? `<input type="time" step="1800" value="${s.fran}" data-sched="${d}" data-k="fran" aria-label="${DAGNAMN[d]} från"> – <input type="time" step="1800" value="${s.till}" data-sched="${d}" data-k="till" aria-label="${DAGNAMN[d]} till">` : `<small class="none">Ledig</small>`}</div>
     <label class="switch"><input type="checkbox" data-sched="${d}" data-k="pa" ${s.pa ? "checked" : ""} aria-label="${DAGNAMN[d]}"><span></span></label></div>`; }).join("")}</div>
-    <div class="sec" style="margin-top:24px"><h3>Lediga dagar</h3>
+    <div class="sec" style="margin-top:24px"><h2>Lediga dagar</h2>
       <form id="ledigform" class="grid2" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end">
         <label><small>Från</small><input type="date" name="fran" min="${iso(new Date())}" required></label>
         <label><small>Till (valfritt)</small><input type="date" name="till" min="${iso(new Date())}"></label>

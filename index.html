@@ -5,8 +5,17 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bokning för Bildfab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Jämförelse av tre bokningsvägar för Bildfabriken i Umeå: Google Kalender, Cal.com och ett eget system, med kostnader och restid.">
+<meta property="og:title" content="Bokning för Bildfab">
+<meta property="og:description" content="Jämförelse av tre bokningsvägar för Bildfabriken i Umeå: Google Kalender, Cal.com och ett eget system, med kostnader och restid.">
+<meta property="og:image" content="https://buildapp.se/bildfab/mvp/assets/og.jpg">
+<link rel="icon" href="mvp/assets/Bildfabriken-logo.png">
+<link rel="preload" href="fonts/roboto-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/roboto.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: "Roboto Mono"; src: url(fonts/roboto-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Roboto"; src: url(fonts/roboto.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+</style>
 <style>
 :root { --ink: #000; --text: #4b4b4b; --muted: #6b6d7a; --line: #e3e5e8; --soft: #f4f6f7; --ok: #1f7a4d; --no: #cf2e2e; --mid: #b4531a;
   --mono: "Roboto Mono", ui-monospace, monospace; --sans: "Roboto", system-ui, sans-serif; }
@@ -15,9 +24,10 @@ body { margin: 0; background: #fff; color: var(--text); font: 16px/1.6 var(--san
 h1, h2, h3 { font-family: var(--mono); color: var(--ink); line-height: 1.2; margin: 0 0 .5em; }
 h1 { font-size: clamp(28px, 4vw, 40px); }
 h2 { font-size: 22px; margin-top: 56px; }
-h3 { font-size: 16px; }
+h3, .card h2 { font-size: 16px; }
+.card h2 { margin-top: 0; }
 header { display: flex; align-items: center; gap: 16px; padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--line); }
-header img { height: 52px; }
+header img { height: 52px; width: auto; }
 main { max-width: 1100px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 48px) 80px; }
 .lead { font-size: 18px; max-width: 720px; }
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
@@ -45,7 +55,7 @@ ol li, ul li { margin-bottom: 6px; }
 </style>
 </head>
 <body>
-<header><img src="mvp/assets/Bildfabriken-logo.png" alt="Bildfabriken"><span style="font-family:var(--mono)">Bokning: tre vägar</span></header>
+<header><img src="mvp/assets/Bildfabriken-logo.png" alt="Bildfabriken" width="241" height="234"><span style="font-family:var(--mono)">Bokning: tre vägar</span></header>
 <main>
   <h1>Bokningssystem för Bildfab</h1>
   <p class="lead">Önskemålet: mäklaren ser lediga tider, klickar i en som blir <b>preliminärt upptagen</b>, fotografen får en <b>pling i mejl och mobil</b> och svarar <b>ja eller nej</b>. Kunden kan avboka, fotografen styr sina tider, och <b>restiden</b> från kontoret räknas ut.</p>
@@ -60,19 +70,19 @@ ol li, ul li { margin-bottom: 6px; }
   <div class="cards">
     <div class="card">
       <span class="tag">Om bokningen får gå direkt</span>
-      <h3>Google Kalender</h3>
+      <h2>Google Kalender</h2>
       <p>Inbyggd bokningssida. Kunden bokar direkt, utan preliminär bokning och utan ja/nej. Gratis med en bokningssida, fler kräver Workspace.</p>
       <a class="btn ghost" href="google/index.html">Öppna Google-demon →</a>
     </div>
     <div class="card">
       <span class="tag">Om fotografen ska säga ja/nej</span>
-      <h3>Cal.com</h3>
+      <h2>Cal.com</h2>
       <p>"Kräver bekräftelse": tiden hålls preliminärt, fotografen får mejl och godkänner eller avböjer i Cal. Gratis för en fotograf, men prissidan anger inte vilken plan "Kräver bekräftelse" hör till: testa i ett gratiskonto först.</p>
       <a class="btn" href="cal/index.html">Öppna Cal.com-demon →</a>
     </div>
     <div class="card">
       <span class="tag">Mest skräddarsytt</span>
-      <h3>Bygga själv</h3>
+      <h2>Bygga själv</h2>
       <p>Allt ovan plus restid som styr vilka tider som visas, mäklarfirmor som fasta kunder och Bildfabs egen design. Kostar utvecklingstid och någon måste äga driften.</p>
       <a class="btn" href="mobil/index.html">Bokningsappen, webb och mobil →</a>
       <a href="mvp/index.html" style="margin-top:10px;font-size:14px;color:var(--ink)">Alternativ skiss: förfrågan med önskade datum (för arkitektuppdrag)</a>

@@ -5,8 +5,19 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Boka foto · Bildfabriken</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Skiss av ett eget förfrågningsformulär för Bildfabriken: tjänst, objekt, önskade datum och uppskattad tid.">
+<meta property="og:title" content="Boka foto · Bildfabriken">
+<meta property="og:description" content="Skiss av ett eget förfrågningsformulär för Bildfabriken: tjänst, objekt, önskade datum och uppskattad tid.">
+<meta property="og:image" content="https://buildapp.se/bildfab/mvp/assets/og.jpg">
+<link rel="icon" href="../mvp/assets/Bildfabriken-logo.png">
+<link rel="preload" href="../fonts/roboto-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/roboto.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="assets/hero-800.webp" media="(max-width: 800px)" fetchpriority="high">
+<link rel="preload" as="image" href="assets/hero-1600.webp" media="(min-width: 801px)" fetchpriority="high">
+<style>
+@font-face { font-family: "Roboto Mono"; src: url(../fonts/roboto-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Roboto"; src: url(../fonts/roboto.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+</style>
 <style>
 :root {
   --ink: #000; --text: #4b4b4b; --muted: #6b6d7a; --line: #e3e5e8;
@@ -18,14 +29,14 @@ body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(
 h1, h2, h3 { font-family: var(--mono); color: var(--ink); line-height: 1.2; margin: 0 0 .5em; }
 h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; }
 h2 { font-size: 22px; font-weight: 700; }
-h3 { font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+h3, legend h2 { font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
 a { color: var(--ink); }
 button, input, select, textarea { font: inherit; color: var(--ink); }
 
 /* header */
 header { display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #fff; z-index: 5; }
-header img { height: 52px; display: block; }
+header img { height: 52px; width: auto; display: block; }
 nav { display: flex; gap: 4px; font-family: var(--mono); font-size: 14px; }
 nav a { text-decoration: none; padding: 8px 14px; border: 1px solid transparent; }
 nav a, header > a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -34,7 +45,8 @@ nav a.on { border-color: var(--ink); }
 .demo { font: 500 11px var(--mono); letter-spacing: .1em; background: var(--ink); color: #fff; padding: 3px 8px; }
 
 /* hero */
-.hero { position: relative; height: 260px; background: #222 url(assets/prastgarden_16maj_export_white-2.jpg) center 40%/cover; }
+.hero { position: relative; height: 260px; background: #222 url(assets/hero-1600.webp) center 40%/cover; }
+@media (max-width: 800px) { .hero { background-image: url(assets/hero-800.webp); } }
 .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.1)); }
 .hero div { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end;
   padding: 0 clamp(16px, 4vw, 48px) 32px; color: #fff; max-width: 1200px; margin: 0 auto; }
@@ -67,7 +79,7 @@ textarea { min-height: 90px; resize: vertical; }
 /* choice cards */
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .card { position: relative; border: 1px solid var(--line); cursor: pointer; background: #fff; display: block; }
-.card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; filter: grayscale(.2); }
+.card img { width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; display: block; filter: grayscale(.2); }
 .card b { display: block; font-family: var(--mono); color: var(--ink); padding: 12px 14px 2px; font-size: 15px; }
 .card small { display: block; padding: 0 14px 14px; color: var(--muted); font-size: 13px; line-height: 1.4; }
 .card input { position: absolute; opacity: 0; }
@@ -179,7 +191,7 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
 <body>
 
 <header>
-  <a href="#boka"><img src="assets/Bildfabriken-logo.png" alt="Bildfabriken"></a>
+  <a href="#boka"><img src="assets/Bildfabriken-logo.png" alt="Bildfabriken" width="241" height="234"></a>
   <nav>
     <a href="#boka" id="nav-boka">Boka foto</a>
     <a href="#fotograf" id="nav-fotograf">Fotografvy</a>
@@ -190,11 +202,11 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
 
 <!-- KUNDVY -->
 <section id="view-boka">
-  <div class="hero"><div>
-    <h1>Boka fotografering</h1>
+  <div class="hero" role="region" aria-labelledby="hero-rubrik"><div>
+    <h1 id="hero-rubrik">Boka fotografering</h1>
     <p>Mäklarfoto · Arkitektur · Interiör · Drönare · Umeå och Norrland</p>
   </div></div>
-  <p class="skiss">Alternativ skiss: förfrågan med önskade datum, för större uppdrag som arkitektur. För mäklare som vill välja en ledig tid direkt, se <a href="../mobil/index.html">bokningsappen</a> (fungerar både på webben och i mobilen).</p>
+  <aside aria-label="Alternativ skiss"><p class="skiss">Alternativ skiss: förfrågan med önskade datum, för större uppdrag som arkitektur. För mäklare som vill välja en ledig tid direkt, se <a href="../mobil/index.html">bokningsappen</a> (fungerar både på webben och i mobilen).</p></aside>
   <main>
     <div class="layout">
       <form id="form" novalidate>
@@ -204,7 +216,7 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
 
         <div class="step" data-step="0">
           <fieldset>
-            <legend><h3>Vem bokar?</h3></legend>
+            <legend><h2>Vem bokar?</h2></legend>
             <div class="pills">
               <label class="pill"><input type="radio" name="kundtyp" value="Mäklare" checked><span>Mäklare</span></label>
               <label class="pill"><input type="radio" name="kundtyp" value="Arkitektbyrå"><span>Arkitektbyrå</span></label>
@@ -213,18 +225,18 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
             </div>
           </fieldset>
           <fieldset>
-            <legend><h3>Vad ska fotograferas?</h3></legend>
+            <legend><h2>Vad ska fotograferas?</h2></legend>
             <div class="cards">
               <label class="card"><input type="checkbox" name="tjanst" value="Bostadsfoto (mäklarpaket)">
-                <img src="assets/doblensplan4_annap-4.jpg" alt=""><b>Bostad till salu</b><small>Mäklarpaket: interiör och exteriör, snabb leverans.</small></label>
+                <img src="assets/doblensplan4_annap-4.webp" alt="" width="720" height="540"><b>Bostad till salu</b><small>Mäklarpaket: interiör och exteriör, snabb leverans.</small></label>
               <label class="card"><input type="checkbox" name="tjanst" value="Arkitekturfoto exteriör">
-                <img src="assets/web-1.jpg" alt=""><b>Arkitektur, exteriör</b><small>Fasader, volymer och sammanhang i rätt ljus.</small></label>
+                <img src="assets/web-1.webp" alt="" width="720" height="540" loading="lazy"><b>Arkitektur, exteriör</b><small>Fasader, volymer och sammanhang i rätt ljus.</small></label>
               <label class="card"><input type="checkbox" name="tjanst" value="Interiörfoto">
-                <img src="assets/varg_web-16.jpg" alt=""><b>Interiör</b><small>Rum, material och detaljer. Ljus och komposition.</small></label>
+                <img src="assets/varg_web-16.webp" alt="" width="720" height="540" loading="lazy"><b>Interiör</b><small>Rum, material och detaljer. Ljus och komposition.</small></label>
             </div>
           </fieldset>
           <fieldset>
-            <legend><h3>Tillägg</h3></legend>
+            <legend><h2>Tillägg</h2></legend>
             <div class="pills">
               <label class="pill"><input type="checkbox" name="tillagg" value="Drönarfoto"><span>Drönarfoto</span></label>
               <label class="pill"><input type="checkbox" name="tillagg" value="Drönarfilm"><span>Drönarfilm</span></label>
@@ -236,7 +248,7 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
 
         <div class="step" data-step="1" hidden>
           <fieldset>
-            <legend><h3>Om objektet</h3></legend>
+            <legend><h2>Om objektet</h2></legend>
             <div class="row">
               <label class="f"><span>Adress *</span><input type="text" name="adress" autocomplete="street-address" required></label>
               <label class="f"><span>Ort *</span><input type="text" name="ort" value="Umeå" required></label>
@@ -262,7 +274,7 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
 
         <div class="step" data-step="2" hidden>
           <fieldset>
-            <legend><h3>Önskade datum (välj upp till 3)</h3></legend>
+            <legend><h2>Önskade datum (välj upp till 3)</h2></legend>
             <div class="cal">
               <div class="cal-head">
                 <button type="button" id="prev" aria-label="Föregående månad">‹</button>
@@ -279,7 +291,7 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
             <ol class="chosen" id="chosen"></ol>
           </fieldset>
           <fieldset>
-            <legend><h3>Tid på dagen</h3></legend>
+            <legend><h2>Tid på dagen</h2></legend>
             <div class="pills">
               <label class="pill"><input type="radio" name="fonster" value="Förmiddag"><span>Förmiddag</span></label>
               <label class="pill"><input type="radio" name="fonster" value="Eftermiddag"><span>Eftermiddag</span></label>
@@ -293,7 +305,7 @@ footer div { max-width: 1200px; margin: 0 auto; display: flex; justify-content: 
 
         <div class="step" data-step="3" hidden>
           <fieldset>
-            <legend><h3>Kontaktuppgifter</h3></legend>
+            <legend><h2>Kontaktuppgifter</h2></legend>
             <div class="row">
               <label class="f"><span>Företag *</span><input type="text" name="foretag" autocomplete="organization" required></label>
               <label class="f"><span>Namn *</span><input type="text" name="namn" autocomplete="name" required></label>
