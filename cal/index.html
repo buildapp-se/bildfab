@@ -471,7 +471,7 @@ function vyStatus(b) {
 const STATUS = { pending: "Obekräftad", accepted: "Bekräftad", rejected: "Avböjd", cancelled: "Avbokad" };
 
 function admin(aktiv, innehall) {
-  const obek = S.bokningar.filter(b => b.status === "pending").length;
+  const obek = S.bokningar.filter(b => b.status === "pending" && b.datum >= iso(new Date())).length;
   const länk = (h, txt, n) => `<a href="#/admin/${h}" class="${aktiv === h ? "on" : ""}">${txt}${n ? `<span class="n">${n}</span>` : ""}</a>`;
   return `<div class="admin">
     <nav class="side" aria-label="Fotografens meny">
@@ -490,7 +490,7 @@ function admin(aktiv, innehall) {
 function vyBokningar(flik) {
   const nu = iso(new Date());
   const urval = {
-    obekraftade: b => b.status === "pending",
+    obekraftade: b => b.status === "pending" && b.datum >= nu, // en förfrågan vars dag passerat finns inget kvar att svara på
     kommande: b => b.status === "accepted" && b.datum >= nu,
     avbokade: b => b.status === "rejected" || b.status === "cancelled",
   }[flik];

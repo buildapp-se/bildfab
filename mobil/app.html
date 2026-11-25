@@ -187,6 +187,8 @@ function standard() {
 }
 function ladda() { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.bokningar) return s; } catch {} return standard(); }
 function spara() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+// Förfrågan som går att svara på: dagen har inte passerat.
+const oppen = b => b.status === "pending" && b.datum >= iso(new Date());
 let S = ladda();
 
 // Lediga starttider. Här styr restiden: fotografen ska hinna köra dit och tillbaka inom arbetsdagen,
@@ -290,8 +292,8 @@ function makMina() {
     <p><b>${esc(kort(b.datum))} · ${hhmm(b.start)}–${hhmm(b.start + b.min)}</b></p>
     <p>📍 ${esc(b.adress)}</p>
     ${b.orsak ? `<p>💬 ${esc(b.orsak)}</p>` : ""}
-    ${b.status === "pending" ? `<p class="hint" style="margin:6px 0 0">Tiden är reserverad åt dig tills fotografen svarar.</p>` : ""}
-    ${["pending", "accepted"].includes(b.status) ? `<div class="yn" style="grid-template-columns:1fr"><button class="nej" data-avboka="${b.id}">Avboka</button></div>` : ""}
+    ${oppen(b) ? `<p class="hint" style="margin:6px 0 0">Tiden är reserverad åt dig tills fotografen svarar.</p>` : ""}
+    ${["pending", "accepted"].includes(b.status) && b.datum >= iso(new Date()) ? `<div class="yn" style="grid-template-columns:1fr"><button class="nej" data-avboka="${b.id}">Avboka</button></div>` : ""}
   </div>`).join("") : `<p class="none">Inga bokningar än. Boka under fliken Boka.</p>`;
 }
 function maklare() { makTop(); makTabs(); M.flik === "boka" ? makBoka() : makMina(); }
@@ -300,14 +302,14 @@ function maklare() { makTop(); makTabs(); M.flik === "boka" ? makBoka() : makMin
 const F = { flik: "forfragningar", avbojer: null };
 function fotTop() { $("#top").innerHTML = `${logga}<h1>Bildfab · Foto<small>${new Date().toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "long" })}</small></h1>`; }
 function fotTabs() {
-  const n = S.bokningar.filter(b => b.status === "pending").length;
+  const n = S.bokningar.filter(oppen).length;
   const t = (id, ikon, txt, extra = "") => `<button data-flik="${id}" class="${F.flik === id ? "on" : ""}"><i>${ikon}</i>${txt}${extra}</button>`;
   $("#tabs").innerHTML = t("forfragningar", "🔔", "Förfrågningar", n ? `<span class="n">${n}</span>` : "") + t("kalender", "📅", "Jobb") + t("tider", "⏱", "Mina tider");
 }
 const totHtml = b => `<div class="tot"><div><span>Jobb</span><b>${fmtMin(b.min)}</b></div><div><span>Restid t/r</span><b>${b.restid ? fmtMin(b.restid.min * 2) : "–"}</b></div><div class="sum"><span>Total</span><b>${fmtMin(b.min + (b.restid ? b.restid.min * 2 : 0))}</b></div></div>`;
 const kartlank = a => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(KONTOR.namn)}&destination=${encodeURIComponent(a)}`;
 function fotForfragningar() {
-  const lista = S.bokningar.filter(b => b.status === "pending").sort((a, b) => a.skapad - b.skapad);
+  const lista = S.bokningar.filter(oppen).sort((a, b) => a.skapad - b.skapad);
   $("#main").innerHTML = lista.length ? lista.map(b => `<div class="card" id="k-${b.id}">
     <span class="badge pending">Ny förfrågan</span>
     <h2>${esc(paket(b.paket).namn)}</h2>
