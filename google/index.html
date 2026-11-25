@@ -23,7 +23,7 @@
   --sans: "Roboto", system-ui, sans-serif; --mono: "Roboto Mono", ui-monospace, monospace;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); overflow-wrap: break-word; }
 h1, h2, h3 { color: var(--ink); margin: 0; font-weight: 400; line-height: 1.3; }
 a { color: var(--blue); }
 button, input, select, textarea { font: inherit; color: var(--ink); }
@@ -139,15 +139,27 @@ label.f > span { display: block; font-size: 12px; color: var(--muted); margin-bo
 #phone .x { position: absolute; top: 14px; right: 16px; background: none; border: 0; color: #fff; font-size: 18px; cursor: pointer; }
 .toast { position: fixed; left: 24px; bottom: 24px; background: #323232; color: #fff; padding: 12px 18px; border-radius: 4px; z-index: 30; }
 
+/* Windows kontrastläge: bakgrunder försvinner, så valt läge och händelser behöver egna system-färger och kanter. */
+@media (forced-colors: active) {
+  .demobar a.on, .side a.on, .rsvp .btn[aria-pressed=true] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .ev { border: 1px solid CanvasText; }
+}
+
 @media (max-width: 860px) {
   .page, .cal-app { grid-template-columns: minmax(0, 1fr); }
   .left { border-right: 0; border-bottom: 1px solid var(--line); }
   .side { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
   .side .brand { display: none; }
   .side a { margin: 0; border-radius: 18px; white-space: nowrap; }
-  .set { grid-template-columns: 1fr; }
+  .set { grid-template-columns: minmax(0, 1fr); }
   .row { grid-template-columns: 1fr; }
   #phone { position: static; margin: 24px auto; } /* mobil: under innehållet, täcker inte kvittot */
+}
+/* 200 % zoom in a phone (under 300 CSS px): times get their own row, labels wrap the Workspace badge. */
+@media (max-width: 300px) {
+  .set .d { grid-template-columns: minmax(0, 1fr) 40px; }
+  .set .d > span { grid-column: 1 / -1; }
+  .chk { flex-wrap: wrap; }
 }
 </style>
 </head>
