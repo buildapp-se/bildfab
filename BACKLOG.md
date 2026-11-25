@@ -17,6 +17,7 @@ Playwright-skript lokalt: alla 24 vyer i 390 och 1440 px (inga JS-fel, trasiga b
 - mobil: fotografens Ja eller Nej i en inaktuell vy kunde göra en avbokad bokning bekräftad, och mäklarens Avboka kunde skriva över en avböjd. Nu bara från rätt status.
 - mobil: bokning utan firma visade "Namn, · 070 ..." och tel-länken hade mellanslag. Rättat.
 - mvp: ett utkast på steg 4 vars datum passerat gick att skicka utan datum. Nu kontrolleras alla steg vid Skicka.
+- Efter deploy var HTML ny men `restid.js` gammal (Cloudflare-träff, max-age 14400). Sidorna laddar nu `restid.js?v=...`.
 - Länkar: alla interna sidor, bilder, typsnitt, Google Kalender, Google Maps, Nominatim och OSRM svarar 200. Okänd sökväg under `buildapp.se/bildfab/` ger 404 från GitHub Pages för buildapp.se, inte från det här repot.
 
 ## Rättat 2026-11-24, buggjakt i mvp (grenen `hunt/2026-11-24`)
